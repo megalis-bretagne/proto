@@ -1,0 +1,54 @@
+<mat-grid-list cols="10" rowHeight="350px">
+    <mat-grid-tile colspan="7">
+    <mat-stepper orientation="vertical" [linear]="isLinear" #stepper>
+      <form [formGroup]="pastelForm">
+      <mat-step [stepControl]="firstFormGroup">
+        <form [formGroup]="firstFormGroup" (ngSubmit)="part1()">
+          <ng-template matStepLabel>Nom du document</ng-template>
+          <mat-form-field appearance="fill">
+            <mat-label>Nom</mat-label>
+            <input matInput placeholder="Nom du document" formControlName="firstCtrl" required >
+          </mat-form-field>
+          <div>
+            <button mat-button type="submit">Submit</button>
+            <button mat-button matStepperNext>Suivant</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="secondFormGroup">
+        <form [formGroup]="secondFormGroup" enctype = "multipart/form-data">
+          <ng-template matStepLabel>Fichiers associés</ng-template>
+          <!--<mat-form-field appearance="fill">-->
+            <input type="file" class="file-upload" class="file-input" formControlName="secondCtrl" (change)="onNewFile($event)" required #fileUpload>
+            <div class="file-upload">
+
+                <button mat-mini-fab color="primary" class="upload-btn"
+                  (click)="fileUpload.click()">
+                    <mat-icon>attach_file</mat-icon>
+                </button>
+
+                {{this.secondCtrl.value || "Pas encore de fichier ajouté."}}
+            </div>
+
+          <!--</mat-form-field>-->
+          <div>
+            <button mat-button matStepperPrevious>Précédent</button>
+            <button mat-button matStepperNext>Suivant</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Publié</ng-template>
+        <p>Publication réalisée avec succès.</p>
+        <div>
+          <button mat-button matStepperPrevious>Précédent</button>
+          <button mat-button (click)="stepper.reset()">Reset</button>
+        </div>
+      </mat-step>
+      </form>
+    </mat-stepper>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="3">
+    <pre>{{pastelForm.value | json}}</pre>
+  </mat-grid-tile>
+
