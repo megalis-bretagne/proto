@@ -25,12 +25,19 @@ def user():
   return json_response({'user': g.user})
 
 
-@app.route("/document", methods=["POST"])
+
+@app.route("/document", methods=["POST", "GET"])
 @app.route("/document/<string:id_doc>", methods=["POST","PATCH"])
 @app.route("/document/<string:id_doc>/file/<string:element>", methods=["POST"])
 @login_required
-def document(id_doc=None, element=None):
-  if request.method == 'POST' and id_doc is None:
+def document(id_doc=None, element=None, field=None):
+  if request.method == 'GET':
+    ressource = '/entite/1/document'
+    PA_request = requests.get(root_url + ressource, auth=HTTPBasicAuth(u, p))
+    data = json.loads(PA_request.text)
+    return json_response(data)
+
+  elif request.method == 'POST' and id_doc is None:
     # CREATE NEw doc
     ressource = '/entite/1/document'
     params = request.get_json()
@@ -54,7 +61,8 @@ def document(id_doc=None, element=None):
 
 
 
-  if request.method == 'PATCH':
+
+  elif request.method == 'PATCH':
     ressource = '/entite/1/document/%s' % id_doc
     params = request.get_json()
     print (params)
@@ -62,6 +70,20 @@ def document(id_doc=None, element=None):
     print(PA_request.text)
     data = json.loads(PA_request.text)
     return json_response({'pastel': data})
+
+
+@app.route("/document/<string:id_doc>/externalData/<string:field>", methods=["GET"])
+@login_required
+def externalData(id_doc, field):
+  #ExternaData
+  ressource = '/entite/1/document/%s/externalData/%s' % (id_doc, field)
+  print(ressource)
+  request = requests.get(root_url + ressource, auth=HTTPBasicAuth(u, p))
+  print (request.text)
+  data = json.loads(request.text)
+  return json_response({'externalData': { field: data}})
+
+
 
 def json_response(payload, status=200):
  return (json.dumps(payload), status, {'content-type': 'application/json'})

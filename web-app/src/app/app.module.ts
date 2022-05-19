@@ -9,13 +9,15 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { PastellFormComponent } from './pastell-form/pastell-form.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { DocumentsListComponent } from './documents-list/documents-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    PastellFormComponent
+    PastellFormComponent,
+    DocumentsListComponent
   ],
   imports: [
     BrowserModule,

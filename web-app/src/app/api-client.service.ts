@@ -21,6 +21,14 @@ export class ApiClientService {
     return this.perform('get', '/user');
   }
 
+  getClassification(entity:string, id_doc:string) {
+    return this.perform('get', `/document/${id_doc}/externalData/classification`)
+  }
+
+  getDocuments(entity:string) {
+    return this.perform('get', '/document');
+  }
+
   createDoc(entity:string, parameters:{}) {
     return this.perform('post', '/document', parameters);
   }
