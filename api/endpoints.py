@@ -28,7 +28,6 @@ def user():
 
 @app.route("/document", methods=["POST", "GET"])
 @app.route("/document/<string:id_doc>", methods=["POST","PATCH"])
-@app.route("/document/<string:id_doc>/file/<string:element>", methods=["POST"])
 @login_required
 def document(id_doc=None, element=None, field=None):
   if request.method == 'GET':
@@ -44,23 +43,6 @@ def document(id_doc=None, element=None, field=None):
     PA_request = requests.post(root_url + ressource, data=params, auth=HTTPBasicAuth(u, p))
     data = json.loads(PA_request.text)
     return json_response({'pastel': data})
-  elif request.method == 'POST' and id_doc and element:
-    # AJOUT Fichier
-    print ('fichier')
-    test_file = open("/home/debian/test.pdf", "rb")
-    ressource = '/entite/1/document/%s/file/%s' % (id_doc, element)
-    if 'file_content' in request.files:
-      fileStorage = request.files['file_content']
-      filename = fileStorage.filename
-      file=request.files['file_content'].read()
-
-      PA_request = requests.post(root_url + ressource, files={'file_content': file}, data = { "file_name": filename}, auth=HTTPBasicAuth(u, p))
-      data = json.loads(PA_request.text)
-      print(data)
-      return json_response({'pastel': data})
-
-
-
 
   elif request.method == 'PATCH':
     ressource = '/entite/1/document/%s' % id_doc
@@ -70,6 +52,20 @@ def document(id_doc=None, element=None, field=None):
     print(PA_request.text)
     data = json.loads(PA_request.text)
     return json_response({'pastel': data})
+
+@app.route("/document/<string:id_doc>/file/<string:element>", methods=["POST"])
+@login_required
+def addFile(id_doc, element):
+  if request.method == 'POST' and id_doc and element:
+    # AJOUT Fichier
+    ressource = '/entite/1/document/%s/file/%s' % (id_doc, element)
+    if 'file_content' in request.files:
+      fileStorage = request.files['file_content']
+      filename = fileStorage.filename
+      file=request.files['file_content'].read()
+      PA_request = requests.post(root_url + ressource, files={'file_content': file}, data = { "file_name": filename}, auth=HTTPBasicAuth(u, p))
+      data = json.loads(PA_request.text)
+      return json_response({'pastel': data})
 
 
 @app.route("/document/<string:id_doc>/externalData/<string:field>", methods=["GET"])
