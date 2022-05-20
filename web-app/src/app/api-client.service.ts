@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { OktaAuthService } from '@okta/okta-angular';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
@@ -8,7 +7,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class ApiClientService {
-  constructor(private oktaAuth: OktaAuthService, private http: HttpClient) {
+  constructor(private http: HttpClient) {
   }
 
 
@@ -50,25 +49,18 @@ export class ApiClientService {
 
 
   async perform(method:string, resource:string, data = {}) {
-    const accessToken = await this.oktaAuth.getAccessToken();
-    const url = `${environment.apiURL}${resource}`;
-
-    let httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${accessToken}`
-      })
-    };
+       const url = `${environment.apiURL}${resource}`;
 
 
     switch (method) {
       case 'delete':
-        return this.http.delete(url, httpOptions).toPromise();
+        return this.http.delete(url).toPromise();
       case 'get':
-        return this.http.get(url,httpOptions).toPromise();
+        return this.http.get(url).toPromise();
       case 'post':
-        return this.http.post(url, data, httpOptions).toPromise();
+        return this.http.post(url, data).toPromise();
       case 'patch':
-        return this.http.patch(url, data, httpOptions).toPromise();
+        return this.http.patch(url, data).toPromise();
       default:
         return 'bad';
     }

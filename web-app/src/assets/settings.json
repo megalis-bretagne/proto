@@ -1,0 +1,13 @@
+{
+    "production": false,
+    "keycloak": {
+      "issuer": "https://sso-preprod.megalis.bretagne.bzh/auth/",
+      "realm": "megalis",
+      "clientId": "open-data-front",
+      "urlLogout": "https://socle-preprod.megalis.bretagne.bzh/singlelogout?logoutSSO=false"
+    },
+    "api": {
+      "url": "https://data-publication-preprod.megalis.bretagne.bzh"
+    },
+    "urlmarqueblanche" :"https://data-preprod.megalis.bretagne.bzh"
+  }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { OktaAuthService } from '@okta/okta-angular';
 import { ApiClientService } from '../api-client.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -16,8 +16,8 @@ export class HomeComponent implements OnInit {
 
 
   constructor(
-    private oktaAuth: OktaAuthService,
-    private apiClient: ApiClientService
+    private apiClient: ApiClientService,
+    private keycloakAuthService : AuthService
   ) {
     this.selectedTab = 0;
     this.version = 'Non synchronisé';
@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
 
   async logout(event:Event) {
     event.preventDefault();
-    await this.oktaAuth.logout('/');
+    await this.keycloakAuthService.logout();
   }
 
 
