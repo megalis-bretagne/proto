@@ -1,39 +1,30 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
-import { OKTA_CONFIG, OktaAuthModule, OktaCallbackComponent, OktaAuthGuard } from '@okta/okta-angular';
-import { HttpClientModule } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
-
-const oktaConfig = {
-  issuer: environment.okta_issuer,
-  clientId: environment.okta_clientId,
-  redirectUri: window.location.origin + '/callback',
-  scope: 'openid profile email'
-}
+import { AuthGuard } from './services/auth-guard.service';
 
 
 
 const routes: Routes = [
- { path: '', component: LoginComponent },
  {
+    path: '',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
+},
+{
+  path: '**',
+  redirectTo: '/home'
+},
+{
    path: 'home',
    component: HomeComponent,
-   canActivate: [OktaAuthGuard],
- },
- { path: 'callback', component: OktaCallbackComponent },
+   canActivate: [AuthGuard],
+}
 ];
 
 @NgModule({
- imports: [
-   RouterModule.forRoot(routes),
-   HttpClientModule,
-   OktaAuthModule
- ],
- providers: [
-   { provide: OKTA_CONFIG, useValue: oktaConfig }
- ],
- exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+
 })
 export class AppRoutingModule { }

@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  okta_issuer: 'YOUR_OKTA_URL',
-  okta_clientId: 'YOUR_OKTA_ISSUER',
+  okta_issuer: 'https://dev-20627065.okta.com/oauth2/default',
+  okta_clientId: '0oasycrvtqb9tYVCA5d6',
   apiURL : 'http://localhost:5005'
 };
 
