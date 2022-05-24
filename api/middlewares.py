@@ -13,7 +13,9 @@ def login_required(f):
        try:
            token = authorization.split(' ')[1]
            resp = decode(token, None, verify=False, algorithms=['HS256'])
-           g.user = resp['sub']
+           g.user = resp['name']
+           g.email = resp['email']
+           g.uid = resp['uid']
 
        except exceptions.DecodeError as identifier:
            return json.dumps({'error': 'invalid authorization token'}), 401, {'Content-type': 'application/json'}
