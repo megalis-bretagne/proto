@@ -127,7 +127,7 @@ export class PastellFormComponent implements OnInit {
     console.log(this.firstFormGroup.value);
     console.log(this.secondFormGroup.value);
     console.log(files.item(0));
-    this._apiClient.uploadFile('1', this.idDoc,'arrete', files.item(0)!)
+    this._apiClient.uploadFile(this.idDoc,'arrete', files.item(0)!)
   }
 
   getClassification() {
@@ -152,17 +152,17 @@ export class PastellFormComponent implements OnInit {
       'type': 'deliberations-studio',
       'objet': this.firstFormGroup.controls['firstCtrl'].value,
       'acte_nature': '1',
-      'numero_de_lacte': 'ABC123'
+      'numero_de_lacte': this.numero_acte.value
 
     }
-    this._apiClient.createDoc('2', parameters).then( (infos:any) => {
+    this._apiClient.createDoc(parameters).then( (infos:any) => {
       if (infos.pastel.info) {
         this.idDoc = infos.pastel.info.id_d;
         this.getClassification();
         let snackBarRef = this.snackBar.open(`Document ${this.idDoc} créé avec succès !`, 'Effacer');
         console.log(infos.pastel.info);
         if (infos.pastel.info.id_d) {
-          this._apiClient.updateDoc('1', infos.pastel.info.id_d, parameters).then( (infos:any) => {
+          this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {
             console.log(infos);
           })
         }
@@ -180,8 +180,13 @@ export class PastellFormComponent implements OnInit {
 
     }
 
-    this._apiClient.updateDoc('1', this.idDoc, parameters).then( (infos:any) => {
+    this._apiClient.updateDoc(this.idDoc, parameters).then( (infos:any) => {
       console.log(infos);
+      //send tdt
+      this._apiClient.sendDoc(this.idDoc,'orientation').then( (infos:any) => {
+        console.log(infos);
+      })
+
     })
   }
 

@@ -48,7 +48,11 @@ export class DocumentsListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.apiClient.getDocuments('1').then( (data: any) => {
+    this.loadDocuments();
+  }
+
+  loadDocuments(): void {
+    this.apiClient.getDocuments().then( (data: any) => {
       this.dataSource = new MatTableDataSource<DocumentInfos>(JSON.parse(JSON.stringify(data)));
       this.dataSource.paginator = this.paginator;
     })

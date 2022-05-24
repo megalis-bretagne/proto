@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiClientService } from '../api-client.service';
 import { AuthService } from '../services/auth.service';
+import { DocumentsListComponent} from '../documents-list/documents-list.component'
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers: [DocumentsListComponent]
 })
 export class HomeComponent implements OnInit {
 
@@ -17,7 +19,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private apiClient: ApiClientService,
-    private keycloakAuthService : AuthService
+    private keycloakAuthService : AuthService,
+    private docList : DocumentsListComponent
   ) {
     this.selectedTab = 0;
     this.version = 'Non synchronisé';
@@ -33,7 +36,10 @@ export class HomeComponent implements OnInit {
 
     this.apiClient.getUser().then( (infos:any) => {
       this.user = infos.user;
+      this.apiClient.setEntity(infos.details['id_e']);
+      this.docList.loadDocuments();
     } )
+
   }
 
   async uploadFile() {
@@ -42,8 +48,8 @@ export class HomeComponent implements OnInit {
     })*/
   }
 
-  async createDoc(entity:string, parameters:{}) {
-    this.apiClient.createDoc(entity, parameters).then(( infos:any) => {
+  async createDoc(parameters:{}) {
+    this.apiClient.createDoc(parameters).then(( infos:any) => {
       this.lastMessage = infos.result;
     })
   }

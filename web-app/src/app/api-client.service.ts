@@ -1,42 +1,64 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { AuthService } from './services/auth.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiClientService {
-  constructor(private http: HttpClient) {
+  user: string;
+  siren: string;
+  role :string;
+  id_e: string;
+  organisme: string;
+  constructor(
+    private http: HttpClient,
+    private keycloakAuthService : AuthService) {
+      this.keycloakAuthService.checkLogin().then((login:any) => {
+        this.siren = login.attributes['siren'];
+        this.role = login.attributes['role'];
+      })
+
+    }
+
+  setEntity(id_e:string) {
+    this.id_e = id_e;
+    console.log('----------' + this.id_e + '----------------');
   }
-
-
 
   getVersion() {
     return this.perform('get', '/version');
   }
 
   getUser() {
-    return this.perform('get', '/user');
+    return this.perform('post', '/user', {'siren': this.siren[0]});
   }
+
+
 
   getClassification(entity:string, id_doc:string) {
     return this.perform('get', `/document/${id_doc}/externalData/classification`)
   }
 
-  getDocuments(entity:string) {
+  getDocuments() {
     return this.perform('get', '/document');
   }
 
-  createDoc(entity:string, parameters:{}) {
+  createDoc(parameters:{}) {
     return this.perform('post', '/document', parameters);
   }
 
-  updateDoc(entity:string, id_doc:string, parameters:{}) {
+  updateDoc(id_doc:string, parameters:{}) {
     return this.perform('patch', `/document/${id_doc}`, parameters);
   }
 
-  uploadFile(entity:string, id_doc:string, element:string, file:File) {
+  sendDoc(id_doc:string, action:string) {
+    return this.perform('post', `/document/${id_doc}/action/${action}`);
+  }
+
+  uploadFile(id_doc:string, element:string, file:File) {
     const formData = new FormData();
     formData.append("file_name", file.name);
     formData.append("file_content", file);
