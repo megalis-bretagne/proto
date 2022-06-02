@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
     this.apiClient.getUser().then( (infos:any) => {
       this.user = infos.user;
       this.apiClient.setEntity(infos.details['id_e']);
-      this.docList.loadDocuments();
+      //this.docList.loadDocuments();
     } )
 
   }

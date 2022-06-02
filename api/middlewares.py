@@ -14,6 +14,7 @@ def login_required(f):
            token = authorization.split(' ')[1]
            resp = decode(token, None, verify=False, algorithms=['HS256'])
            g.user = resp['name']
+           g.username = resp['preferred_username']
            g.email = resp['email']
            g.uid = resp['uid']
 

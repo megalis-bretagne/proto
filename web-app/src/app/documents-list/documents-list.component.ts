@@ -41,14 +41,13 @@ export class DocumentsListComponent implements OnInit {
 
   dataSource = new MatTableDataSource<DocumentInfos>();
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
 
   constructor(
     private apiClient: ApiClientService
   ) {}
 
   ngOnInit(): void {
-    this.loadDocuments();
   }
 
   loadDocuments(): void {
@@ -56,12 +55,12 @@ export class DocumentsListComponent implements OnInit {
       this.dataSource = new MatTableDataSource<DocumentInfos>(JSON.parse(JSON.stringify(data)));
       this.dataSource.paginator = this.paginator;
     })
+
+
   }
 
   ngAfterViewInit() {
-    //this.dataSource.paginator = this.paginator;
-
-
+    this.loadDocuments();
   }
 
   editDocument(doc:DocumentInfos) {

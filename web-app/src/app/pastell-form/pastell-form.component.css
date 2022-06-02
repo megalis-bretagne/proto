@@ -26,3 +26,8 @@
     align-items: center;
     flex-direction: column;
   }
+
+  .file-upload .material-icons.megalis {
+    vertical-align: middle;
+    padding-left: 15px;
+  }

@@ -36,8 +36,7 @@
                   (click)="fileUpload.click()">
                     <mat-icon>attach_file</mat-icon>
                 </button>
-
-                {{this.secondCtrl.value || "Pas encore de fichier ajouté."}}
+                <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.secondCtrl.value.split('\\')[2] || "Pas encore de fichier ajouté."}}
             </div>
 
 
