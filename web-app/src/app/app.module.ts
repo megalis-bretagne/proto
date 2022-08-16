@@ -17,6 +17,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { DeliberationsComponent } from './deliberations/deliberations.component';
 import { NavbarComponent, DialogInfos } from './navbar/navbar.component';
 import { ActesAutresComponent } from './actes-autres/actes-autres.component';
+import { PastellSnackComponent } from './components/pastell-snack.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ActesAutresComponent } from './actes-autres/actes-autres.component';
     DeliberationsComponent,
     NavbarComponent,
     DialogInfos,
+    PastellSnackComponent,
     ActesAutresComponent
   ],
   imports: [

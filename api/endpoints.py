@@ -94,28 +94,30 @@ def document(id_doc=None, element=None, field=None, id_action=None):
   else:
     print('Infos manquantes : id_e')
     return json_response([])
+  IDE = PASTELL_SESSIONS[g.uid]['details']['id_e']
   if request.method == 'GET':
-    ressource = '/entite/%s/document' % PASTELL_SESSIONS[g.uid]['details']['id_e']
+    ressource = '/entite/%s/document' % IDE
     PA_request = requests.get(root_url + ressource, auth=HTTPBasicAuth(u, p))
     data = json.loads(PA_request.text)
     return json_response(data)
 
   elif request.method == 'POST' and id_doc is None:
     # CREATE NEw doc
-    ressource = '/entite/%s/document' % PASTELL_SESSIONS[g.uid]['details']['id_e']
+    ressource = '/entite/%s/document' % IDE
     params = request.get_json()
     PA_request = requests.post(root_url + ressource, data=params, auth=HTTPBasicAuth(u, p))
     data = json.loads(PA_request.text)
-    return json_response({'pastel': data})
+    print(data)
+    return json_response({'pastel': data, 'link': '%s/Document/detail?id_d=%s&id_e=%s' % (root_url.split('/api/')[0], data['info']['id_d'],IDE )})
 
   elif request.method == 'POST' and id_doc and id_action:
-    ressource = '/entite/%s/document/%s/action/%s' % (PASTELL_SESSIONS[g.uid]['details']['id_e'], id_doc, id_action)
+    ressource = '/entite/%s/document/%s/action/%s' % (IDE, id_doc, id_action)
     PA_request = requests.post(root_url + ressource, auth=HTTPBasicAuth(u, p))
     data = json.loads(PA_request.text)
     return json_response({'action': data})
 
   elif request.method == 'PATCH':
-    ressource = '/entite/%s/document/%s' % (PASTELL_SESSIONS[g.uid]['details']['id_e'],id_doc)
+    ressource = '/entite/%s/document/%s' % (IDE,id_doc)
     params = request.get_json()
     print (params)
     PA_request = requests.patch(root_url + ressource, data=params, auth=HTTPBasicAuth(u, p))

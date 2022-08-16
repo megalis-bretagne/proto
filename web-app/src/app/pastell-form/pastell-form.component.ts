@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { PastellSnackComponent } from '../components/pastell-snack.component';
 import { ApiClientService } from '../api-client.service';
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
@@ -157,9 +158,10 @@ export class PastellFormComponent implements OnInit {
     }
     this._apiClient.createDoc(parameters).then( (infos:any) => {
       if (infos.pastel.info) {
-        this.idDoc = infos.pastel.info.id_d;
+        this.idDoc = infos.pastel.id_d;
+        const link = infos.link;
         this.getClassification();
-        let snackBarRef = this.snackBar.open(`Document ${this.idDoc} créé avec succès !`, 'Effacer');
+        let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc, 'link': link}});
         console.log(infos.pastel.info);
         if (infos.pastel.info.id_d) {
           this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {

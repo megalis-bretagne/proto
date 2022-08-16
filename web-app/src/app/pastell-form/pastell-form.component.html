@@ -1,7 +1,5 @@
     <div class="container">
-    <mat-stepper orientation="horizontal" [linear]="isLinear" #stepper>
       <form [formGroup]="pastelForm">
-      <mat-step [stepControl]="firstFormGroup">
         <div class="custom-center">
           <form [formGroup]="firstFormGroup" (ngSubmit)="part1()">
             <ng-template matStepLabel>Nom du document</ng-template>
@@ -12,21 +10,15 @@
             <mat-form-field appearance="outline">
               <mat-label>Numéro de l'acte</mat-label>
               <input matInput placeholder="Numéro d'acte" formControlName="numero_acte" required pattern="[A-Z0-9_]{4,12}">
-
-
-
-
-
             </mat-form-field>
             <div>
               <button mat-button type="submit">Submit</button>
-              <button mat-button matStepperNext>Suivant</button>
             </div>
           </form>
         </div>
-      </mat-step>
-      <mat-step [stepControl]="secondFormGroup">
+
         <form [formGroup]="secondFormGroup" enctype = "multipart/form-data">
+          <div class="custom-center">
           <ng-template matStepLabel>Fichiers associés</ng-template>
           <!--<mat-form-field appearance="fill">-->
             <input type="file" class="file-upload" class="file-input" formControlName="secondCtrl" (change)="onNewFile($event)" required #fileUpload>
@@ -42,12 +34,11 @@
 
           <!--</mat-form-field>-->
           <div>
-            <button mat-button matStepperPrevious>Précédent</button>
-            <button mat-button matStepperNext>Suivant</button>
+
+          </div>
           </div>
         </form>
-      </mat-step>
-      <mat-step [stepControl]="details">
+
         <div class="custom-center">
           <form [formGroup]="details" (ngSubmit)="part2()">
             <!--<div class="form-group">-->
@@ -91,23 +82,17 @@
 
 
             <div>
-              <button mat-button type="submit">Submit</button>
-              <button mat-button matStepperNext>Suivant</button>
+
             </div>
           </form>
         </div>
-      </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>Publié</ng-template>
-        <p>Publication réalisée avec succès.</p>
+
         <div>
-          <button mat-button matStepperPrevious>Précédent</button>
-          <button mat-button (click)="stepper.reset()">Reset</button>
+
         </div>
-      </mat-step>
+
       </form>
-    </mat-stepper>
-    <!--<pre>{{pastelForm.value | json}}</pre>-->
+
 </div>
 
 
