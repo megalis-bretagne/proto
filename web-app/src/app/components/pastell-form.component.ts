@@ -51,16 +51,17 @@ export const MY_FORMATS = {
   ]
 })
 export class PastellFormComponent implements OnInit {
-
-  isLinear = true;
+  isLinear: true;
+  lastSendedParameters = {};
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
   details!: FormGroup;
   fileSource!: FormControl;
   firstCtrl!: FormControl;
+  idDoc!:FormControl;
   secondCtrl!: FormControl;
   date!: FormControl;
-  idDoc = '';
+  //idDoc = '';
   classification!: FormControl;
   opendata!: FormControl;
   numero_acte!: FormControl;
@@ -71,6 +72,7 @@ export class PastellFormComponent implements OnInit {
 
 
   createFormControls() {
+    this.idDoc = new FormControl('');
     this.firstCtrl = new FormControl('', Validators.required);
     this.numero_acte = new FormControl('', [Validators.required]);
     this.secondCtrl = new FormControl('', Validators.required);
@@ -83,6 +85,7 @@ export class PastellFormComponent implements OnInit {
   createForm() {
     this.firstFormGroup = new FormGroup({
       firstCtrl: this.firstCtrl,
+      idDoc: this.idDoc,
       numero_acte: this.numero_acte
     });
 
@@ -128,12 +131,12 @@ export class PastellFormComponent implements OnInit {
     console.log(this.firstFormGroup.value);
     console.log(this.secondFormGroup.value);
     console.log(files.item(0));
-    this._apiClient.uploadFile(this.idDoc,'arrete', files.item(0)!)
+    this._apiClient.uploadFile(this.idDoc.value,'arrete', files.item(0)!)
   }
 
   getClassification() {
     if (this.idDoc && this.classifications.length == 0) {
-      this._apiClient.getClassification('1', this.idDoc).then( (infos: any) => {
+      this._apiClient.getClassification(this.idDoc.value).then( (infos: any) => {
         if (infos.externalData.classification) {
           let tmp = []
           for (let [k, v] of Object.entries(infos.externalData.classification)) {
@@ -149,6 +152,9 @@ export class PastellFormComponent implements OnInit {
   }
 
   part1() {
+    if (this.firstFormGroup.invalid) {
+      return false;
+    }
     const parameters = {
       'type': 'deliberations-studio',
       'objet': this.firstFormGroup.controls['firstCtrl'].value,
@@ -156,20 +162,36 @@ export class PastellFormComponent implements OnInit {
       'numero_de_lacte': this.numero_acte.value
 
     }
-    this._apiClient.createDoc(parameters).then( (infos:any) => {
-      if (infos.pastel.info) {
-        this.idDoc = infos.pastel.id_d;
-        const link = infos.link;
-        this.getClassification();
-        let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc, 'link': link}});
-        console.log(infos.pastel.info);
-        if (infos.pastel.info.id_d) {
-          this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {
-            console.log(infos);
+    if (!this.idDoc.value) {
+      this._apiClient.createDoc(parameters).then( (infos:any) => {
+        if (infos.pastel.info) {
+          this.firstFormGroup.patchValue({
+            idDoc : infos.pastel.id_d
           })
+          const link = infos.link;
+          this.getClassification();
+          let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc.value, 'link': link}});
+          console.log(infos.pastel.info);
+          if (infos.pastel.info.id_d) {
+            this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {
+              this.lastSendedParameters = parameters;
+              console.log(infos);
+            })
+          }
         }
+      })
+
+    } else {
+      if (JSON.stringify(this.lastSendedParameters) != JSON.stringify(parameters) ){
+        this._apiClient.updateDoc(this.idDoc.value, parameters).then( (infos:any) => {
+          console.log(infos);
+        })
+      } else {
+        console.log("nothing to update");
       }
-    })
+
+    }
+
 
   }
 
@@ -182,10 +204,10 @@ export class PastellFormComponent implements OnInit {
 
     }
 
-    this._apiClient.updateDoc(this.idDoc, parameters).then( (infos:any) => {
+    this._apiClient.updateDoc(this.idDoc.value, parameters).then( (infos:any) => {
       console.log(infos);
       //send tdt
-      this._apiClient.sendDoc(this.idDoc,'orientation').then( (infos:any) => {
+      this._apiClient.sendDoc(this.idDoc.value,'orientation').then( (infos:any) => {
         console.log(infos);
       })
 

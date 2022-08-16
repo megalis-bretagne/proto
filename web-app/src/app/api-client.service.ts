@@ -39,7 +39,7 @@ export class ApiClientService {
 
 
 
-  getClassification(entity:string, id_doc:string) {
+  getClassification(id_doc:string) {
     return this.perform('get', `/document/${id_doc}/externalData/classification`)
   }
 
