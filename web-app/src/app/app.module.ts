@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MaterialExampleModule} from '../material.module';
-import { HomeComponent } from './home/home.component';
+//import { HomeComponent } from './home/home.component';
 import { PastellFormComponent } from './pastell-form/pastell-form.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DocumentsListComponent } from './documents-list/documents-list.component';
@@ -21,7 +21,7 @@ import { ActesAutresComponent } from './actes-autres/actes-autres.component';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
+    //HomeComponent,
     PastellFormComponent,
     DocumentsListComponent,
     DashboardComponent,

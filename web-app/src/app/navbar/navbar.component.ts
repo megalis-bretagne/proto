@@ -3,6 +3,7 @@ import { ApiClientService } from '../api-client.service';
 import { AuthService } from '../services/auth.service';
 import {MatDialog} from '@angular/material/dialog';
 
+
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -14,8 +15,8 @@ export class NavbarComponent implements OnInit {
   user: String;
 
   constructor(
-    private apiClient: ApiClientService,
     private keycloakAuthService : AuthService,
+    private apiClient: ApiClientService,
     public dialog: MatDialog
   ) {
     this.version = 'Non synchronisé';
@@ -26,7 +27,7 @@ export class NavbarComponent implements OnInit {
     this.dialog.open(DialogInfos);
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.apiClient.getVersion().then( (infos:any) => {
       this.version = infos.pastel;
     } )

@@ -32,7 +32,8 @@ export class ApiClientService {
     return this.perform('get', '/version');
   }
 
-  getUser() {
+  async getUser() {
+    await this.keycloakAuthService;
     return this.perform('post', '/user', {'siren': this.siren});
   }
 
