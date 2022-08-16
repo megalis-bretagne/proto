@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { DeliberationsComponent } from './deliberations/deliberations.component';
+import { DeliberationsComponent } from './components/deliberations.component';
 import { AuthGuard } from './services/auth-guard.service';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { ActesAutresComponent } from './actes-autres/actes-autres.component';
+import { DashboardComponent } from './components/dashboard.component';
+import { ActesAutresComponent } from './components/actes-autres.component';
 
 
 
