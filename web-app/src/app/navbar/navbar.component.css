@@ -1,0 +1,12 @@
+.example-spacer {
+    flex: 1 1 auto;
+  }
+
+  span.beta {
+    padding-left: 10px;
+    background-color: orange;
+    padding-right: 10px;
+    font-size: smaller;
+    line-height: 1.5;
+    margin-left: 10px;
+}

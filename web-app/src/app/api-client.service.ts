@@ -17,7 +17,7 @@ export class ApiClientService {
     private http: HttpClient,
     private keycloakAuthService : AuthService) {
       this.keycloakAuthService.checkLogin().then((login:any) => {
-        this.siren = login.attributes['siren'];
+        this.siren = login.attributes['siren'][0];
         this.role = login.attributes['role'];
       })
 
@@ -33,7 +33,7 @@ export class ApiClientService {
   }
 
   getUser() {
-    return this.perform('post', '/user', {'siren': this.siren[0]});
+    return this.perform('post', '/user', {'siren': this.siren});
   }
 
 

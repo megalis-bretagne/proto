@@ -12,13 +12,22 @@ import { DocumentsListComponent } from './documents-list/documents-list.componen
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { SettingsHttpService } from 'src/environments/settings.http.service';
 import { HttpClientModule } from '@angular/common/http';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { DeliberationsComponent } from './deliberations/deliberations.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { ActesAutresComponent } from './actes-autres/actes-autres.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     PastellFormComponent,
-    DocumentsListComponent
+    DocumentsListComponent,
+    DashboardComponent,
+    DeliberationsComponent,
+    NavbarComponent,
+    ActesAutresComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +37,8 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     ReactiveFormsModule,
     KeycloakAngularModule,
-    HttpClientModule
+    HttpClientModule,
+    FlexLayoutModule,
   ],
   providers: [
     {

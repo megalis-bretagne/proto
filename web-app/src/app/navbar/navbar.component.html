@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+    <button mat-icon-button class="example-icon" aria-label="" routerLink="">
+      <mat-icon>extension</mat-icon>
+    </button>
+    <span>Proto</span>
+    <span class="beta">beta</span>
+    <span class="example-spacer"></span>
+    <button mat-icon-button class="example-icon person-icon" aria-label="">
+      <mat-icon>person</mat-icon>
+    </button>
+    <span>{{user}}</span>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="">
+          <mat-icon>home</mat-icon>
+          <span>Accueil</span>
+        </button>
+        <button mat-menu-item (click)="openInfosDialog()">
+          <mat-icon>voicemail</mat-icon>
+          <span>infos</span>
+        </button>
+        <button mat-menu-item  (click)="logout($event)">
+          <mat-icon>logout</mat-icon>
+          <span>Déconnection</span>
+        </button>
+      </mat-menu>
+  </mat-toolbar>
