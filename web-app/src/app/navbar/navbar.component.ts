@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ApiClientService } from '../api-client.service';
 import { AuthService } from '../services/auth.service';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
+export interface DialogData {
+  version: '';
+}
 
 @Component({
   selector: 'app-navbar',
@@ -24,7 +27,10 @@ export class NavbarComponent implements OnInit {
   }
 
   openInfosDialog() {
-    this.dialog.open(DialogInfos);
+    this.dialog.open(DialogInfos, {
+      data: {
+        version: this.version
+      }});
   }
 
   ngOnInit() {
@@ -52,4 +58,7 @@ export class NavbarComponent implements OnInit {
   selector: 'dialog-infos',
   templateUrl: 'dialog-infos.html',
 })
-export class DialogInfos {}
+
+export class DialogInfos {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+}

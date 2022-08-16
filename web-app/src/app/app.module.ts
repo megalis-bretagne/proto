@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DeliberationsComponent } from './deliberations/deliberations.component';
-import { NavbarComponent } from './navbar/navbar.component';
+import { NavbarComponent, DialogInfos } from './navbar/navbar.component';
 import { ActesAutresComponent } from './actes-autres/actes-autres.component';
 
 @NgModule({
@@ -27,6 +27,7 @@ import { ActesAutresComponent } from './actes-autres/actes-autres.component';
     DashboardComponent,
     DeliberationsComponent,
     NavbarComponent,
+    DialogInfos,
     ActesAutresComponent
   ],
   imports: [
