@@ -8,13 +8,20 @@
           <form [formGroup]="firstFormGroup" (ngSubmit)="part1()">
             <ng-template matStepLabel>Description du document</ng-template>
             <input hidden formControlName="idDoc" >
+            <input hidden formControlName="pastellLink" >
             <mat-form-field appearance="outline">
               <mat-label>Objet</mat-label>
               <input matInput placeholder="Objet du document" formControlName="firstCtrl" required >
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Numéro de l'acte</mat-label>
-              <input matInput placeholder="Numéro d'acte" formControlName="numero_acte" required pattern="[A-Z0-9_]{4,12}">
+              <input matInput placeholder="Numéro d'acte" formControlName="numero_acte" required pattern="[A-Z0-9_]{4,12}" [errorStateMatcher]="matcher">
+              <mat-error *ngIf="numero_acte.hasError('pattern') && !numero_acte.hasError('required')">
+                4 à 12 charactères parmis majuscules + chiffres et "_"
+              </mat-error>
+              <mat-error *ngIf="numero_acte.hasError('required')">
+                Numéro d'acte est <strong>requis</strong>
+              </mat-error>
             </mat-form-field>
             <div>
               <!--<button mat-button type="submit">Submit</button>-->
@@ -55,7 +62,7 @@
         <div class="custom-center">
           <form [formGroup]="details" (ngSubmit)="part2()">
             <!--<div class="form-group">-->
-            <ng-template matStepLabel>Détails</ng-template>
+            <ng-template matStepLabel>Informations complémentaires</ng-template>
             <mat-form-field appearance="outline">
               <mat-label>Classification</mat-label>
               <mat-select
@@ -98,7 +105,7 @@
 
             </div>
             <div>
-              <button mat-button type="submit">Submit</button>
+              <button mat-button matStepperPrevious>Précédent</button>
               <button mat-button matStepperNext>Suivant</button>
             </div>
           </form>
@@ -106,9 +113,36 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Statut</ng-template>
-        <p>Publication réalisée avec succès !</p>
+
+
+        <mat-card class="status-card">
+          <mat-card-subtitle>Pastell</mat-card-subtitle>
+          <mat-card-title>{{idDoc.value}}</mat-card-title>
+          <mat-card-content>
+            <div *ngIf="status.value === '0'">
+              <p>Document en cours de publication !</p>
+            </div>
+            <div *ngIf="status.value === '1'">
+              <p>Document <a [href]="pastellLink.value" target="_blank">{{idDoc.value}}</a> publié avec succès !</p>
+            </div>
+            <div *ngIf="status.value === '2'">
+              <p>Echec dans la publication du document<a [href]="pastellLink.value" target="_blank">{{idDoc.value}}</a></p>
+            </div>
+          </mat-card-content>
+          <mat-divider inset></mat-divider>
+          <mat-card-actions>
+            <button mat-button color="primary" (click)="stepper.reset();pastelForm.enable()">Recommencer</button>
+            <button mat-button disabled color="warn">Supprimer</button>
+          </mat-card-actions>
+          <mat-card-footer>
+            <mat-progress-bar *ngIf="status.value === '0'" mode="indeterminate"></mat-progress-bar>
+            <mat-progress-bar *ngIf="status.value === '1'" mode="determinate" value="100"></mat-progress-bar>
+            <mat-progress-bar *ngIf="status.value === '2'"  mode="determinate" value="20"></mat-progress-bar>
+          </mat-card-footer>
+        </mat-card>
+
         <div>
-          <button mat-button (click)="stepper.reset()">Recommencer</button>
+          <!--<button mat-button (click)="stepper.reset();pastelForm.enable()">Recommencer</button>-->
         </div>
       </mat-step>
 

@@ -11,7 +11,7 @@ import { DocumentsListComponent } from './documents-list/documents-list.componen
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { SettingsHttpService } from 'src/environments/settings.http.service';
 import { HttpClientModule } from '@angular/common/http';
-import { DashboardComponent } from './components/dashboard.component';
+import { DashboardComponent, SafeHtmlPipe } from './components/dashboard.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DeliberationsComponent } from './components/deliberations.component';
 import { NavbarComponent, DialogInfos } from './components/navbar.component';
@@ -24,6 +24,7 @@ import { PastellSnackComponent } from './components/pastell-snack.component';
     PastellFormComponent,
     DocumentsListComponent,
     DashboardComponent,
+    SafeHtmlPipe,
     DeliberationsComponent,
     NavbarComponent,
     DialogInfos,

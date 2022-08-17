@@ -1,10 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
+import {NgForm, FormGroup, Validators, FormControl, FormGroupDirective} from '@angular/forms';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PastellSnackComponent } from '../components/pastell-snack.component';
 import { ApiClientService } from '../api-client.service';
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, ErrorStateMatcher} from '@angular/material/core';
+
+/** Error when invalid control is dirty, touched, or submitted. */
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
 
 // Depending on whether rollup is used, moment needs to be imported differently.
 // Since Moment.js doesn't have a default export, we normally need to import using the `* as`
@@ -51,7 +59,9 @@ export const MY_FORMATS = {
   ]
 })
 export class PastellFormComponent implements OnInit {
-  isLinear: true;
+  isLinear: boolean;
+  status!:FormControl;
+  pastellLink!:FormControl;
   lastSendedParameters = {};
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
@@ -70,9 +80,12 @@ export class PastellFormComponent implements OnInit {
   /******/
   pastelForm! : FormGroup;
 
+  matcher = new MyErrorStateMatcher();
 
   createFormControls() {
     this.idDoc = new FormControl('');
+    this.pastellLink = new FormControl('');
+    this.status = new FormControl('');
     this.firstCtrl = new FormControl('', Validators.required);
     this.numero_acte = new FormControl('', [Validators.required]);
     this.secondCtrl = new FormControl('', Validators.required);
@@ -86,7 +99,9 @@ export class PastellFormComponent implements OnInit {
     this.firstFormGroup = new FormGroup({
       firstCtrl: this.firstCtrl,
       idDoc: this.idDoc,
-      numero_acte: this.numero_acte
+      status: this.status,
+      numero_acte: this.numero_acte,
+      pastellLink: this.pastellLink
     });
 
     this.details = new FormGroup({
@@ -120,6 +135,7 @@ export class PastellFormComponent implements OnInit {
   ngOnInit() {
     this.createFormControls();
     this.createForm();
+    this.isLinear = true;
 
   }
 
@@ -166,11 +182,13 @@ export class PastellFormComponent implements OnInit {
       this._apiClient.createDoc(parameters).then( (infos:any) => {
         if (infos.pastel.info) {
           this.firstFormGroup.patchValue({
-            idDoc : infos.pastel.id_d
+            idDoc : infos.pastel.id_d,
+            pastellLink: infos.link,
+            status: "0"
           })
-          const link = infos.link;
+
           this.getClassification();
-          let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc.value, 'link': link}});
+          let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc.value, 'link': this.pastellLink.value}});
           console.log(infos.pastel.info);
           if (infos.pastel.info.id_d) {
             this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {
@@ -195,6 +213,10 @@ export class PastellFormComponent implements OnInit {
 
   }
 
+  disableForm() {
+    this.pastelForm.disable();
+  }
+
   part2() {
     const parameters = {
       'date_de_lacte': moment(this.date.value).format("YYYY-MM-DD"),
@@ -209,6 +231,17 @@ export class PastellFormComponent implements OnInit {
       //send tdt
       this._apiClient.sendDoc(this.idDoc.value,'orientation').then( (infos:any) => {
         console.log(infos);
+        let status;
+        if (infos.action!.result === true) {
+          status = "1";
+          this.disableForm();
+        } else {
+          status = "2";
+        }
+        this.firstFormGroup.patchValue({
+          status: status
+        })
+
       })
 
     })
