@@ -6,10 +6,7 @@
             <mat-card-title>{{card.title}}</mat-card-title>
           </mat-card-header>
           <img mat-card-image [src]="card.img">
-          <mat-card-content>
-            <p>
-              {{card.description}}
-            </p>
+          <mat-card-content [innerHtml]="card.description | safeHtml">
           </mat-card-content>
           <mat-card-actions>
             <button mat-raised-button color="primary" [routerLink]="card.link">{{card.button}}</button>
