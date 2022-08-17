@@ -42,9 +42,9 @@ export const MY_FORMATS = {
 
 
 @Component({
-  selector: 'app-pastell-form',
-  templateUrl: './pastell-form.component.html',
-  styleUrls: ['./pastell-form.component.css'],
+  selector: 'app-deliberations-form',
+  templateUrl: './deliberations-form.component.html',
+  styleUrls: ['./deliberations-form.component.css'],
   providers: [
     // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
     // application's root module. We provide it at the component level here, due to limitations of

@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MaterialExampleModule} from '../material.module';
-import { PastellFormComponent } from './components/pastell-form.component';
+import { PastellFormComponent } from './components/deliberations-form.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DocumentsListComponent } from './documents-list/documents-list.component';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
