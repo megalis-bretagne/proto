@@ -38,13 +38,15 @@ export const MY_FORMATS = {
   },
 };
 
-
-
+type kv = {
+  id: string;
+  value: string
+};
 
 @Component({
-  selector: 'app-deliberations-form',
-  templateUrl: './deliberations-form.component.html',
-  styleUrls: ['./deliberations-form.component.css'],
+  selector: 'app-no-tdt-form',
+  templateUrl: './no-tdt-form.component.html',
+  styleUrls: ['./no-tdt-form.component.css'],
   providers: [
     // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
     // application's root module. We provide it at the component level here, due to limitations of
@@ -58,7 +60,10 @@ export const MY_FORMATS = {
     {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
   ]
 })
-export class DeliberationsFormComponent implements OnInit {
+
+
+
+export class NoTdtFormComponent implements OnInit {
   isLinear: boolean;
   status!:FormControl;
   pastellLink!:FormControl;
@@ -68,6 +73,7 @@ export class DeliberationsFormComponent implements OnInit {
   details!: FormGroup;
   fileSource!: FormControl;
   firstCtrl!: FormControl;
+  nature_autres!:FormControl;
   idDoc!:FormControl;
   secondCtrl!: FormControl;
   date!: FormControl;
@@ -76,6 +82,7 @@ export class DeliberationsFormComponent implements OnInit {
   opendata!: FormControl;
   numero_acte!: FormControl;
   classifications : string[] = [];
+  natures_autres : kv[] = [];
 
   /******/
   pastelForm! : FormGroup;
@@ -84,6 +91,7 @@ export class DeliberationsFormComponent implements OnInit {
 
   createFormControls() {
     this.idDoc = new FormControl('');
+    this.nature_autres = new FormControl('', Validators.required);
     this.pastellLink = new FormControl('');
     this.status = new FormControl('');
     this.firstCtrl = new FormControl('', Validators.required);
@@ -93,12 +101,18 @@ export class DeliberationsFormComponent implements OnInit {
     this.classification = new FormControl('', Validators.required);
     this.date = new FormControl(moment(), Validators.required);
     this.opendata = new FormControl('', Validators.required);
+    this.natures_autres = [
+      { "id":'AR', "value":'Arrêté temporaire' },
+      { "id":'LD', "value":'Liste des délibérations' },
+      { "id":'PV', "value":'Procès verbal' }
+    ];
   }
 
   createForm() {
     this.firstFormGroup = new FormGroup({
       firstCtrl: this.firstCtrl,
       idDoc: this.idDoc,
+      nature_autres: this.nature_autres,
       status: this.status,
       numero_acte: this.numero_acte,
       pastellLink: this.pastellLink
@@ -172,10 +186,11 @@ export class DeliberationsFormComponent implements OnInit {
       return false;
     }
     const parameters = {
-      'type': 'deliberations-studio',
+      'type': 'autres-studio-sans-tdt',
       'objet': this.firstFormGroup.controls['firstCtrl'].value,
-      'acte_nature': '1',
-      'numero_de_lacte': this.numero_acte.value
+      'acte_nature': '6',
+      'numero_de_lacte': this.numero_acte.value,
+      'nature_autre_detail': this.nature_autres.value
 
     }
     if (!this.idDoc.value) {

@@ -1,0 +1,38 @@
+.mat-stepper-vertical {
+    margin-top: 8px;
+  }
+
+  .mat-form-field {
+    margin-top: 16px;
+    padding: 10px;
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  .file-upload {
+    padding-top: 20px;
+   padding-bottom: 20px;
+  }
+
+  /*mat-form-field {
+    width: 100%;
+  }*/
+
+  .custom-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .file-upload .material-icons.megalis {
+    vertical-align: middle;
+    padding-left: 15px;
+  }
+
+  .status-card {
+    max-width: 400px;
+    margin-top: 3px;
+  }
