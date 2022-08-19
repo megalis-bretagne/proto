@@ -36,14 +36,14 @@
           <div class="custom-center">
           <ng-template matStepLabel>Fichiers associés</ng-template>
           <!--<mat-form-field appearance="fill">-->
-            <input type="file" class="file-upload" class="file-input" formControlName="secondCtrl" (change)="onNewFile($event)" required #fileUpload>
+            <input type="file" class="file-upload" name="arrete" class="file-input" formControlName="arrete" (change)="onNewFile($event)" required #fileUpload>
             <div class="file-upload">
 
                 <button mat-mini-fab color="primary" class="upload-btn"
                   (click)="fileUpload.click()">
                     <mat-icon>attach_file</mat-icon>
                 </button>
-                <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.secondCtrl.value?.split('\\')[2] || "Pas encore de fichier ajouté."}}
+                <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.arrete.value?.split('\\')[2] || "Pas encore de fichier ajouté."}}
             </div>
 
 

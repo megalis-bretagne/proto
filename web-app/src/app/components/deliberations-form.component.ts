@@ -66,10 +66,9 @@ export class DeliberationsFormComponent implements OnInit {
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
   details!: FormGroup;
-  fileSource!: FormControl;
   firstCtrl!: FormControl;
   idDoc!:FormControl;
-  secondCtrl!: FormControl;
+  arrete!: FormControl;
   date!: FormControl;
   //idDoc = '';
   classification!: FormControl;
@@ -88,8 +87,7 @@ export class DeliberationsFormComponent implements OnInit {
     this.status = new FormControl('');
     this.firstCtrl = new FormControl('', Validators.required);
     this.numero_acte = new FormControl('', [Validators.required]);
-    this.secondCtrl = new FormControl('', Validators.required);
-    this.fileSource = new FormControl('', Validators.required);
+    this.arrete = new FormControl('', Validators.required);
     this.classification = new FormControl('', Validators.required);
     this.date = new FormControl(moment(), Validators.required);
     this.opendata = new FormControl('', Validators.required);
@@ -111,9 +109,7 @@ export class DeliberationsFormComponent implements OnInit {
     });
 
     this.secondFormGroup =  new FormGroup({
-      secondCtrl: this.secondCtrl,
-      fileSource: this.fileSource,
-
+      arrete: this.arrete
     })
 
 
@@ -141,13 +137,11 @@ export class DeliberationsFormComponent implements OnInit {
 
   onNewFile(event:Event) {
     let files = (event?.target as HTMLInputElement)?.files as FileList;
-    this.secondFormGroup.patchValue({
-      fileSource: files[0]
-    });
+    const name = (event?.target as HTMLInputElement)?.name;
     console.log(this.firstFormGroup.value);
     console.log(this.secondFormGroup.value);
     console.log(files.item(0));
-    this._apiClient.uploadFile(this.idDoc.value,'arrete', files.item(0)!)
+    this._apiClient.uploadFile(this.idDoc.value, name, files.item(0)!)
   }
 
   getClassification() {
