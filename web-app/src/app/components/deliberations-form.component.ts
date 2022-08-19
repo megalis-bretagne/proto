@@ -141,7 +141,7 @@ export class DeliberationsFormComponent implements OnInit {
     console.log(this.firstFormGroup.value);
     console.log(this.secondFormGroup.value);
     console.log(files.item(0));
-    this._apiClient.uploadFile(this.idDoc.value, name, files.item(0)!)
+    this._apiClient.uploadFile(this.idDoc.value, name, files.item(0)!, 0);
   }
 
   getClassification() {
