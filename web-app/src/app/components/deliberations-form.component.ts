@@ -222,7 +222,7 @@ export class DeliberationsFormComponent implements OnInit {
       'date_de_lacte': moment(this.date.value).format("YYYY-MM-DD"),
       'classification': this.classification.value,
       'type_acte': '99_DE',
-      'publication_open_data' : (this.opendata.value==true?'':'1')
+      'publication_open_data' : (this.opendata.value==true?'3':'1')
 
     }
 
