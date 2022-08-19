@@ -38,6 +38,20 @@ export const MY_FORMATS = {
   },
 };
 
+type autresStudioSansTdt = {
+    type?: string;
+    date_de_lacte?: string;
+    acte_nature?: string;
+    numero_de_lacte?: string;
+    objet?: string;
+    publication_open_data?: string;
+    nature_autre_detail?: string;
+    arrete?: string;
+    autre_document_attache?: string;
+    classification?: string;
+    type_acte?: string;
+}
+
 type kv = {
   id: string;
   value: string
@@ -75,7 +89,7 @@ export class NoTdtFormComponent implements OnInit {
   firstCtrl!: FormControl;
   nature_autres!:FormControl;
   idDoc!:FormControl;
-  secondCtrl!: FormControl;
+  arrete!: FormControl;
   date!: FormControl;
   //idDoc = '';
   classification!: FormControl;
@@ -96,7 +110,7 @@ export class NoTdtFormComponent implements OnInit {
     this.status = new FormControl('');
     this.firstCtrl = new FormControl('', Validators.required);
     this.numero_acte = new FormControl('', [Validators.required]);
-    this.secondCtrl = new FormControl('', Validators.required);
+    this.arrete = new FormControl('', Validators.required);
     this.fileSource = new FormControl('', Validators.required);
     this.classification = new FormControl('', Validators.required);
     this.date = new FormControl(moment(), Validators.required);
@@ -112,20 +126,19 @@ export class NoTdtFormComponent implements OnInit {
     this.firstFormGroup = new FormGroup({
       firstCtrl: this.firstCtrl,
       idDoc: this.idDoc,
-      nature_autres: this.nature_autres,
       status: this.status,
       numero_acte: this.numero_acte,
       pastellLink: this.pastellLink
     });
 
     this.details = new FormGroup({
-      classification: this.classification,
+      nature_autres: this.nature_autres,
       date: this.date,
       opendata: this.opendata
     });
 
     this.secondFormGroup =  new FormGroup({
-      secondCtrl: this.secondCtrl,
+      arrete: this.arrete,
       fileSource: this.fileSource,
 
     })
@@ -155,13 +168,14 @@ export class NoTdtFormComponent implements OnInit {
 
   onNewFile(event:Event) {
     let files = (event?.target as HTMLInputElement)?.files as FileList;
+    const name = (event?.target as HTMLInputElement)?.name;
     this.secondFormGroup.patchValue({
       fileSource: files[0]
     });
     console.log(this.firstFormGroup.value);
     console.log(this.secondFormGroup.value);
     console.log(files.item(0));
-    this._apiClient.uploadFile(this.idDoc.value,'arrete', files.item(0)!)
+    this._apiClient.uploadFile(this.idDoc.value, name, files.item(0)!)
   }
 
   getClassification() {
@@ -185,13 +199,11 @@ export class NoTdtFormComponent implements OnInit {
     if (this.firstFormGroup.invalid) {
       return false;
     }
-    const parameters = {
-      'type': 'autres-studio-sans-tdt',
-      'objet': this.firstFormGroup.controls['firstCtrl'].value,
-      'acte_nature': '6',
-      'numero_de_lacte': this.numero_acte.value,
-      'nature_autre_detail': this.nature_autres.value
-
+    const parameters:autresStudioSansTdt = {
+      type: 'autres-studio-sans-tdt',
+      objet: this.firstFormGroup.controls['firstCtrl'].value,
+      acte_nature: '6',
+      numero_de_lacte: this.numero_acte.value
     }
     if (!this.idDoc.value) {
       this._apiClient.createDoc(parameters).then( (infos:any) => {
@@ -201,8 +213,6 @@ export class NoTdtFormComponent implements OnInit {
             pastellLink: infos.link,
             status: "0"
           })
-
-          this.getClassification();
           let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc.value, 'link': this.pastellLink.value}});
           console.log(infos.pastel.info);
           if (infos.pastel.info.id_d) {
@@ -233,12 +243,11 @@ export class NoTdtFormComponent implements OnInit {
   }
 
   part2() {
-    const parameters = {
+    const parameters:autresStudioSansTdt = {
+      'nature_autre_detail': this.nature_autres.value,
       'date_de_lacte': moment(this.date.value).format("YYYY-MM-DD"),
-      'classification': this.classification.value,
-      'type_acte': '99_DE',
-      'publication_open_data' : (this.opendata.value==true?'':'1')
-
+      'publication_open_data' : (this.opendata.value==true?'3':'1')
+      //,'type_acte': '99_AU'
     }
 
     this._apiClient.updateDoc(this.idDoc.value, parameters).then( (infos:any) => {

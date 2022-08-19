@@ -10,18 +10,6 @@
             <input hidden formControlName="idDoc" >
             <input hidden formControlName="pastellLink" >
             <mat-form-field appearance="outline">
-              <mat-label>Nature</mat-label>
-              <mat-select
-                  formControlName="nature_autres"
-                  class="form-select"
-                  id="nature_autres">
-                  <mat-option *ngFor="let opt of natures_autres"
-                          [value]="opt.id">
-                    {{opt.value}}
-                  </mat-option>
-            </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
               <mat-label>Objet</mat-label>
               <input matInput placeholder="Objet du document" formControlName="firstCtrl" required >
             </mat-form-field>
@@ -48,14 +36,14 @@
           <div class="custom-center">
           <ng-template matStepLabel>Fichiers associés</ng-template>
           <!--<mat-form-field appearance="fill">-->
-            <input type="file" class="file-upload" class="file-input" formControlName="secondCtrl" (change)="onNewFile($event)" required #fileUpload>
+            <input type="file" class="file-upload" name="arrete" class="file-input" formControlName="arrete" (change)="onNewFile($event)" required #fileUpload>
             <div class="file-upload">
 
                 <button mat-mini-fab color="primary" class="upload-btn"
                   (click)="fileUpload.click()">
                     <mat-icon>attach_file</mat-icon>
                 </button>
-                <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.secondCtrl.value?.split('\\')[2] || "Pas encore de fichier ajouté."}}
+                <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.arrete.value?.split('\\')[2] || "Pas encore de fichier ajouté."}}
             </div>
 
 
@@ -75,22 +63,22 @@
           <form [formGroup]="details" (ngSubmit)="part2()">
             <!--<div class="form-group">-->
             <ng-template matStepLabel>Informations complémentaires</ng-template>
-            <mat-form-field appearance="outline">
-              <mat-label>Classification</mat-label>
-              <mat-select
-                  formControlName="classification"
-                  class="form-select"
-                  id="classification">
-                  <mat-option *ngFor="let classification of classifications"
-                          [value]="classification">
-                    {{classification}}
-                  </mat-option>
-            </mat-select>
-            </mat-form-field>
           <!--</div>-->
           <!--<div class="form-group">-->
             <mat-form-field appearance="outline">
+              <mat-label>Nature</mat-label>
+              <mat-select
+                  formControlName="nature_autres"
+                  class="form-select"
+                  id="nature_autres">
+                  <mat-option *ngFor="let opt of natures_autres"
+                          [value]="opt.id">
+                    {{opt.value}}
+                  </mat-option>
+            </mat-select>
+            </mat-form-field>
 
+            <mat-form-field appearance="outline">
               <!--<mat-label>Date</mat-label>-->
               <input matInput formControlName="date" [matDatepicker]="picker">
               <mat-hint>YYYY-MM-DD</mat-hint>
@@ -100,13 +88,9 @@
                 </mat-icon>
               </mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
-
             </mat-form-field>
-
             <div class="form-group">
                 <mat-checkbox formControlName="opendata">Publication opendata</mat-checkbox>
-
-
             </div>
 
           <!--</div>-->
