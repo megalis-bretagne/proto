@@ -38,13 +38,22 @@
           <!--<mat-form-field appearance="fill">-->
             <input type="file" class="file-upload" name="arrete" class="file-input" formControlName="arrete" (change)="onNewFile($event)" required #fileUpload>
             <div class="file-upload">
-
                 <button mat-mini-fab color="primary" class="upload-btn"
                   (click)="fileUpload.click()">
                     <mat-icon>attach_file</mat-icon>
                 </button>
                 <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.arrete.value?.split('\\')[2] || "Pas encore de fichier ajouté."}}
             </div>
+
+            <input type="file" class="file-upload" name="autre_document_attache" class="file-input" formControlName="autre_document_attache" (change)="onNewFile($event)" required #fileUpload2>
+            <div class="file-upload">
+                <button mat-mini-fab color="primary" class="upload-btn"
+                  (click)="fileUpload2.click()">
+                    <mat-icon>attach_file</mat-icon>
+                </button>
+                <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.autre_document_attache.value?.split('\\')[2] || "Pas encore d'annexe ajoutée."}}
+            </div>
+
 
 
           <!--</mat-form-field>-->

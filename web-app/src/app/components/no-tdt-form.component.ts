@@ -85,11 +85,11 @@ export class NoTdtFormComponent implements OnInit {
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
   details!: FormGroup;
-  fileSource!: FormControl;
   firstCtrl!: FormControl;
   nature_autres!:FormControl;
   idDoc!:FormControl;
   arrete!: FormControl;
+  autre_document_attache!: FormControl;
   date!: FormControl;
   //idDoc = '';
   classification!: FormControl;
@@ -111,7 +111,7 @@ export class NoTdtFormComponent implements OnInit {
     this.firstCtrl = new FormControl('', Validators.required);
     this.numero_acte = new FormControl('', [Validators.required]);
     this.arrete = new FormControl('', Validators.required);
-    this.fileSource = new FormControl('', Validators.required);
+    this.autre_document_attache = new FormControl('', Validators.required);
     this.classification = new FormControl('', Validators.required);
     this.date = new FormControl(moment(), Validators.required);
     this.opendata = new FormControl('', Validators.required);
@@ -139,7 +139,7 @@ export class NoTdtFormComponent implements OnInit {
 
     this.secondFormGroup =  new FormGroup({
       arrete: this.arrete,
-      fileSource: this.fileSource,
+      autre_document_attache: this.autre_document_attache
 
     })
 
@@ -169,9 +169,6 @@ export class NoTdtFormComponent implements OnInit {
   onNewFile(event:Event) {
     let files = (event?.target as HTMLInputElement)?.files as FileList;
     const name = (event?.target as HTMLInputElement)?.name;
-    this.secondFormGroup.patchValue({
-      fileSource: files[0]
-    });
     console.log(this.firstFormGroup.value);
     console.log(this.secondFormGroup.value);
     console.log(files.item(0));
