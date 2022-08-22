@@ -70,6 +70,10 @@ export class ApiClientService {
     return this.perform('post', `/document/${id_doc}/file/${element}/${numero}`, formData);
   }
 
+  deleteFile(id_doc:string, element:string, numero:number) {
+    return this.perform('delete', `/document/${id_doc}/file/${element}/${numero}`);
+  }
+
 
   async perform(method:string, resource:string, data = {}) {
        const url = `${environment.apiURL}${resource}`;

@@ -45,7 +45,7 @@
                 <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.arrete.value?.split('\\')[2] || "Pas encore de fichier ajouté."}}
             </div>
 
-            <input type="file" class="file-upload" name="autre_document_attache" class="file-input" formControlName="autre_document_attache" (change)="onNewFile($event)" required #fileUpload2>
+            <input type="file" multiple class="file-upload" name="autre_document_attache" class="file-input" formControlName="autre_document_attache" (change)="onNewFile($event)" required #fileUpload2>
             <div class="file-upload">
                 <button mat-mini-fab color="primary" class="upload-btn"
                   (click)="fileUpload2.click()">
@@ -53,6 +53,17 @@
                 </button>
                 <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.autre_document_attache.value?.split('\\')[2] || "Pas encore d'annexe ajoutée."}}
             </div>
+
+            <mat-chip-list class="mat-chip-list-stacked" #chipList aria-label="Annexes selection">
+              <mat-chip selected color="primary" *ngFor="let file of filesAnnexe" (removed)="removeFile(file)">
+                {{file.name}}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-list>
+
+
 
 
 

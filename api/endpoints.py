@@ -125,12 +125,12 @@ def document(id_doc=None, element=None, field=None, id_action=None):
     data = json.loads(PA_request.text)
     return json_response({'pastel': data})
 
-@app.route("/document/<string:id_doc>/file/<string:element>/<string:numero>", methods=["POST"])
+@app.route("/document/<string:id_doc>/file/<string:element>/<string:numero>", methods=["POST", "DELETE"])
 @login_required
 def addFile(id_doc, element, numero='0'):
+  ressource = '/entite/%s/document/%s/file/%s/%s' % (PASTELL_SESSIONS[g.uid]['details']['id_e'], id_doc, element, numero)
   if request.method == 'POST' and id_doc and element:
     # AJOUT Fichier
-    ressource = '/entite/%s/document/%s/file/%s/%s' % (PASTELL_SESSIONS[g.uid]['details']['id_e'], id_doc, element, numero)
     if 'file_content' in request.files:
       fileStorage = request.files['file_content']
       filename = fileStorage.filename
@@ -138,6 +138,12 @@ def addFile(id_doc, element, numero='0'):
       PA_request = requests.post(root_url + ressource, files={'file_content': file}, data = { "file_name": filename}, auth=HTTPBasicAuth(u, p))
       data = json.loads(PA_request.text)
       return json_response({'pastel': data})
+
+  elif request.method == 'DELETE'and id_doc and element:
+    PA_request2 = requests.delete(root_url + ressource, auth=HTTPBasicAuth(u, p))
+    data2 = json.loads(PA_request2.text)
+    return json_response({'pastel': data2})
+
 
 
 @app.route("/document/<string:id_doc>/externalData/<string:field>", methods=["GET"])

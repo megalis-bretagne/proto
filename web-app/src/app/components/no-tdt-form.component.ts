@@ -38,6 +38,21 @@ export const MY_FORMATS = {
   },
 };
 
+interface PastellDocumentModification {
+  'action-possible' : string[];
+  data: autresStudioSansTdt;
+}
+
+interface PastellResponse {
+  pastel : PastellDocumentModification
+}
+
+interface FileItem {
+  name: string;
+  source: string;
+  index : number;
+}
+
 type autresStudioSansTdt = {
     type?: string;
     date_de_lacte?: string;
@@ -97,6 +112,7 @@ export class NoTdtFormComponent implements OnInit {
   numero_acte!: FormControl;
   classifications : string[] = [];
   natures_autres : kv[] = [];
+  filesAnnexe : FileItem[] = [];
 
   /******/
   pastelForm! : FormGroup;
@@ -163,16 +179,44 @@ export class NoTdtFormComponent implements OnInit {
     this.createFormControls();
     this.createForm();
     this.isLinear = true;
+    this.filesAnnexe = [];
 
   }
 
-  onNewFile(event:Event) {
-    let files = (event?.target as HTMLInputElement)?.files as FileList;
-    const name = (event?.target as HTMLInputElement)?.name;
-    console.log(this.firstFormGroup.value);
-    console.log(this.secondFormGroup.value);
-    console.log(files.item(0));
-    this._apiClient.uploadFile(this.idDoc.value, name, files.item(0)!, 0);
+  async onNewFile(event:Event) {
+    const element = (event?.target as HTMLInputElement);
+    let files = element?.files as FileList;
+    const name = element?.name;
+    const multiple = element?.multiple;
+    const docsUploaded = this.filesAnnexe.length;
+    for (let i = 0; i < files.length; i++) {
+       const file = files.item(i);
+       const res = await this._apiClient.uploadFile(this.idDoc.value, name, file, i + docsUploaded);
+       console.log( res );
+       if (multiple && name == "autre_document_attache") {
+         this.filesAnnexe.push({ name : file.name, source: "autre_document_attache", index: i + docsUploaded });
+       }
+    }
+
+  }
+
+  async removeFile(file:FileItem) {
+    let res:any = await this._apiClient.deleteFile(this.idDoc.value, file.source, file.index);
+    if (res.pastel.data.autre_document_attache) {
+        //check is file is deleted
+        const files:string[] = res.pastel.data.autre_document_attache;
+        if (files.indexOf(file.name) == -1 ) {
+          if (this.filesAnnexe[file.index].name == file.name) {
+            this.filesAnnexe.splice(file.index, 1);
+            this.filesAnnexe.forEach((element, index) => {
+              element.index = index;
+            });
+          }
+        }
+    } else {
+      this.filesAnnexe = [];
+    }
+    console.log(res);
   }
 
   getClassification() {
@@ -210,6 +254,7 @@ export class NoTdtFormComponent implements OnInit {
             pastellLink: infos.link,
             status: "0"
           })
+          this.filesAnnexe = [];
           let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc.value, 'link': this.pastellLink.value}});
           console.log(infos.pastel.info);
           if (infos.pastel.info.id_d) {
