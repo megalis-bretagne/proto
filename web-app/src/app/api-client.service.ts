@@ -55,6 +55,11 @@ export class ApiClientService {
     return this.perform('patch', `/document/${id_doc}`, parameters);
   }
 
+  deleteDoc(id_doc:string) {
+    return this.perform('delete', `/document/${id_doc}`);
+  }
+
+
   sendDoc(id_doc:string, action:string) {
     return this.perform('post', `/document/${id_doc}/action/${action}`);
   }

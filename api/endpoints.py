@@ -85,7 +85,7 @@ def user():
 
 
 @app.route("/document", methods=["POST", "GET"])
-@app.route("/document/<string:id_doc>", methods=["POST","PATCH"])
+@app.route("/document/<string:id_doc>", methods=["POST","PATCH","DELETE"])
 @app.route("/document/<string:id_doc>/action/<string:id_action>", methods=["POST"])
 @login_required
 def document(id_doc=None, element=None, field=None, id_action=None):
@@ -122,6 +122,12 @@ def document(id_doc=None, element=None, field=None, id_action=None):
     print (params)
     PA_request = requests.patch(root_url + ressource, data=params, auth=HTTPBasicAuth(u, p))
     print(PA_request.text)
+    data = json.loads(PA_request.text)
+    return json_response({'pastel': data})
+
+  elif request.method == 'DELETE' and id_doc:
+    ressource = '/entite/%s/document/%s/action/supression' % (IDE, id_doc)
+    PA_request = requests.post(root_url + ressource, auth=HTTPBasicAuth(u, p))
     data = json.loads(PA_request.text)
     return json_response({'pastel': data})
 
