@@ -36,3 +36,47 @@
     max-width: 400px;
     margin-top: 3px;
   }
+
+button[busy] #label-btn {
+    display: none;
+}
+button[busy] span.my-loader {
+    display: inline-block;
+}
+
+button span.my-loader {
+    display: none;
+}
+
+mat-chip a {
+  color: #fff;
+}
+
+
+
+.bottom-toolbar button {
+  margin-right: 20px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.bottom-toolbar {
+  position: fixed;
+  bottom:0;
+}
+
+h1 {
+  padding-left: 50px;
+  margin-bottom: 0;
+  padding-top: 10px;
+}
+h4 {
+  padding-left: 50px;
+}
+
+.example-margin {
+  padding: 10px;
+}
+

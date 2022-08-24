@@ -1,21 +1,29 @@
     <div class="container">
+      <h1>Publier un acte</h1>
+      <h4>ne passant pas par le contrôle de légalité</h4>
       <div class="custom-center">
-      <mat-stepper orientation="vertical" linear="true" #stepper>
-      <form [formGroup]="pastelForm">
-        <mat-step [stepControl]="firstFormGroup">
+        <!--<mat-card class="form-card" *ngIf="!formEnabled">
+          <p>Document publié avec succès</p>
+        </mat-card>-->
+      <mat-spinner *ngIf="waiting"></mat-spinner>
+      <mat-card class="form-card" *ngIf="formEnabled">
+        <mat-card-title>Nouvelle publication d'acte
+          <mat-chip selected color="primary"><a [href]="pastellLink" target="_blank">{{idDoc}}</a></mat-chip>
+        </mat-card-title>
+        <mat-card-subtitle>ne passant pas par le contrôle de légalité</mat-card-subtitle>
+      <form [formGroup]="pastelForm" (ngSubmit)="onFormSubmit()">
+        <mat-card-content>
         <div class="custom-center">
 
-          <form [formGroup]="firstFormGroup" (ngSubmit)="part1()">
-            <ng-template matStepLabel>Description du document</ng-template>
-            <input hidden formControlName="idDoc" >
-            <input hidden formControlName="pastellLink" >
+          <form [formGroup]="firstFormGroup">
+            <input formControlName="acte_nature" hidden>
             <mat-form-field appearance="outline">
               <mat-label>Objet</mat-label>
-              <input matInput placeholder="Objet du document" formControlName="firstCtrl" required >
+              <input matInput placeholder="Objet du document" formControlName="objet" required >
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Numéro de l'acte</mat-label>
-              <input matInput placeholder="Numéro d'acte" formControlName="numero_acte" required pattern="[A-Z0-9_]{4,12}" [errorStateMatcher]="matcher">
+              <input matInput placeholder="Numéro d'acte" formControlName="numero_de_lacte" required pattern="[A-Z0-9_]{4,12}" [errorStateMatcher]="matcher">
               <mat-error *ngIf="numero_acte.hasError('pattern') && !numero_acte.hasError('required')">
                 4 à 12 charactères parmis majuscules + chiffres et "_"
               </mat-error>
@@ -23,72 +31,10 @@
                 Numéro d'acte est <strong>requis</strong>
               </mat-error>
             </mat-form-field>
-            <div>
-              <!--<button mat-button type="submit">Submit</button>-->
-              <button mat-button matStepperNext>Suivant</button>
-            </div>
-          </form>
-        </div>
-
-      </mat-step>
-      <mat-step [stepControl]="secondFormGroup">
-        <form [formGroup]="secondFormGroup" enctype = "multipart/form-data">
-          <div class="custom-center">
-          <ng-template matStepLabel>Fichiers associés</ng-template>
-          <!--<mat-form-field appearance="fill">-->
-            <input type="file" class="file-upload" name="arrete" class="file-input" formControlName="arrete" (change)="onNewFile($event)" required #fileUpload>
-            <div class="file-upload">
-                <button mat-mini-fab color="primary" class="upload-btn"
-                  (click)="fileUpload.click()">
-                    <mat-icon>attach_file</mat-icon>
-                </button>
-                <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.arrete.value?.split('\\')[2] || "Pas encore de fichier ajouté."}}
-            </div>
-
-            <input type="file" multiple class="file-upload" name="autre_document_attache" class="file-input" formControlName="autre_document_attache" (change)="onNewFile($event)" required #fileUpload2>
-            <div class="file-upload">
-                <button mat-mini-fab color="primary" class="upload-btn"
-                  (click)="fileUpload2.click()">
-                    <mat-icon>attach_file</mat-icon>
-                </button>
-                <mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.autre_document_attache.value?.split('\\')[2] || "Pas encore d'annexe ajoutée."}}
-            </div>
-
-            <mat-chip-list class="mat-chip-list-stacked" #chipList aria-label="Annexes selection">
-              <mat-chip selected color="primary" *ngFor="let file of filesAnnexe" (removed)="removeFile(file)">
-                {{file.name}}
-                <button matChipRemove>
-                  <mat-icon>cancel</mat-icon>
-                </button>
-              </mat-chip>
-            </mat-chip-list>
-
-
-
-
-
-          <!--</mat-form-field>-->
-          <div>
-
-          </div>
-          </div>
-          <div>
-            <button mat-button matStepperPrevious>Précédent</button>
-            <button mat-button matStepperNext>Suivant</button>
-          </div>
-        </form>
-      </mat-step>
-      <mat-step [stepControl]="details">
-        <div class="custom-center">
-          <form [formGroup]="details" (ngSubmit)="part2()">
-            <!--<div class="form-group">-->
-            <ng-template matStepLabel>Informations complémentaires</ng-template>
-          <!--</div>-->
-          <!--<div class="form-group">-->
             <mat-form-field appearance="outline">
               <mat-label>Nature</mat-label>
               <mat-select
-                  formControlName="nature_autres"
+                  formControlName="nature_autre_detail"
                   class="form-select"
                   id="nature_autres">
                   <mat-option *ngFor="let opt of natures_autres"
@@ -100,7 +46,7 @@
 
             <mat-form-field appearance="outline">
               <!--<mat-label>Date</mat-label>-->
-              <input matInput formControlName="date" [matDatepicker]="picker">
+              <input matInput formControlName="date_de_lacte" [matDatepicker]="picker">
               <mat-hint>YYYY-MM-DD</mat-hint>
               <mat-datepicker-toggle matSuffix [for]="picker">
                 <mat-icon matDatepickerToggleIcon>
@@ -110,61 +56,109 @@
               <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
             <div class="form-group">
-                <mat-checkbox formControlName="opendata">Publication opendata</mat-checkbox>
+                <mat-radio-group formControlName="publication_open_data">
+                  <mat-radio-button class="example-margin" value="3">Publié en opendata</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="1">Ne sais pas</mat-radio-button>
+                </mat-radio-group>
             </div>
 
-          <!--</div>-->
-
-
-
-            <div>
-
-            </div>
-            <div>
-              <button mat-button matStepperPrevious>Précédent</button>
-              <button mat-button matStepperNext>Suivant</button>
-            </div>
           </form>
         </div>
-      </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>Statut</ng-template>
 
+        <mat-divider></mat-divider>
 
-        <mat-card class="status-card">
-          <mat-card-subtitle>Pastell</mat-card-subtitle>
-          <mat-card-title>{{idDoc.value}}</mat-card-title>
-          <mat-card-content>
-            <div *ngIf="status.value === '0'">
-              <p>Document en cours de publication !</p>
+        <form [formGroup]="secondFormGroup" enctype = "multipart/form-data">
+          <mat-grid-list class="grid-file" cols="6" rowHeight="100px">
+            <mat-grid-tile colspan="1">
+            <mat-label>Acte*</mat-label>
+            <input type="file" class="file-upload" name="arrete" class="file-input" formControlName="arrete" (change)="onNewFile($event)" required #fileUpload>
+            <div class="file-upload">
+                <button mat-mini-fab color="primary" class="upload-btn" matTooltip="Ajouter un fichier"
+                  (click)="fileUpload.click()">
+                    <mat-icon>attach_file</mat-icon>
+                </button>
+                <!--<mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.arrete.value?.split('\\')[2] || "Pas encore de fichier ajouté."}}-->
             </div>
-            <div *ngIf="status.value === '1'">
-              <p>Document <a [href]="pastellLink.value" target="_blank">{{idDoc.value}}</a> publié avec succès !</p>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="5">
+            <mat-chip-list class="mat-chip-list-stacked" #chipList aria-label="Acte">
+              <mat-chip selected color="primary" *ngFor="let file of fileActe" (removed)="removeFile(file)">
+                {{file.name}}
+                <button matChipRemove matTooltip="Supprimer ce fichier">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-list>
+          </mat-grid-tile>
+          </mat-grid-list>
+            <mat-divider></mat-divider>
+        <mat-grid-list cols="6" class="grid-file">
+          <mat-grid-tile colspan="1">
+            <mat-label>Annexes</mat-label>
+            <input type="file" multiple class="file-upload" name="autre_document_attache" class="file-input" formControlName="autre_document_attache" (change)="onNewFile($event)" #fileUpload2>
+            <div class="file-upload">
+                <button mat-mini-fab color="primary" class="upload-btn" matTooltip="Ajouter un fichier ou plusieurs fichiers"
+                  (click)="fileUpload2.click()">
+                    <mat-icon>attach_file</mat-icon>
+                </button>
+                <!--<mat-icon class="megalis right">picture_as_pdf</mat-icon>{{this.autre_document_attache.value?.split('\\')[2] || "Pas encore d'annexe ajoutée."}}-->
             </div>
-            <div *ngIf="status.value === '2'">
-              <p>Echec dans la publication du document<a [href]="pastellLink.value" target="_blank">{{idDoc.value}}</a></p>
-            </div>
-          </mat-card-content>
-          <mat-divider inset></mat-divider>
-          <mat-card-actions>
-            <button mat-button color="primary" (click)="stepper.reset();pastelForm.enable()">Recommencer</button>
-            <button mat-button disabled color="warn">Supprimer</button>
-          </mat-card-actions>
-          <mat-card-footer>
-            <mat-progress-bar *ngIf="status.value === '0'" mode="indeterminate"></mat-progress-bar>
-            <mat-progress-bar *ngIf="status.value === '1'" mode="determinate" value="100"></mat-progress-bar>
-            <mat-progress-bar *ngIf="status.value === '2'"  mode="determinate" value="20"></mat-progress-bar>
-          </mat-card-footer>
-        </mat-card>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="5">
+            <mat-chip-list class="mat-chip-list-stacked" #chipList aria-label="Annexes selection">
+              <mat-chip *ngFor="let file of filesAnnexe" (removed)="removeFile(file)">
+                {{file.name}}
+                <button matChipRemove matTooltip="Supprimer ce fichier">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-list>
+          </mat-grid-tile>
+        </mat-grid-list>
 
-        <div>
-          <!--<button mat-button (click)="stepper.reset();pastelForm.enable()">Recommencer</button>-->
-        </div>
-      </mat-step>
 
+
+
+
+        </form>
+
+
+
+
+      </mat-card-content>
+      <mat-divider inset></mat-divider>
+      <mat-card-actions  align="end">
+
+        <button id="apply-btn" type="submit" mat-raised-button color="primary" [disabled]="pastelForm.invalid">
+          <span class="my-loader" aria-hidden="true">
+            <mat-icon>
+              <mat-spinner color="accent" diameter="20"></mat-spinner>
+            </mat-icon>
+          </span>
+          <span class="my-loader sr-only">Traitement en cours...</span>
+          <span id="label-btn" class="sr-only">Publier</span>
+        </button>
+      </mat-card-actions>
       </form>
-    </mat-stepper>
+      <mat-card-footer>
+        <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+      </mat-card-footer>
+    </mat-card>
       </div>
+
+
+      <mat-toolbar class="bottom-toolbar">
+        <button matTooltip="Publier un nouveau document" matTooltipPosition="above" *ngIf="!formEnabled" mat-fab color="primary" aria-label="Publier un nouvel acte" (click)="newActe()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button matTooltip="Supprimer le document courant" matTooltipPosition2="above" *ngIf="formEnabled" mat-fab color="warn" aria-label="Supprimer" (click)="deleteActe(idDoc)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <!--<span class="example-spacer"></span>-->
+
+      </mat-toolbar>
+
+
 </div>
 
 

@@ -94,25 +94,30 @@ type kv = {
 
 export class NoTdtFormComponent implements OnInit {
   isLinear: boolean;
-  status!:FormControl;
-  pastellLink!:FormControl;
+  pastellLink:string;
   lastSendedParameters = {};
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
-  details!: FormGroup;
-  firstCtrl!: FormControl;
+  objet!: FormControl;
   nature_autres!:FormControl;
-  idDoc!:FormControl;
+  idDoc:string;
   arrete!: FormControl;
   autre_document_attache!: FormControl;
   date!: FormControl;
-  //idDoc = '';
+  acte_nature!: FormControl;
   classification!: FormControl;
   opendata!: FormControl;
   numero_acte!: FormControl;
   classifications : string[] = [];
   natures_autres : kv[] = [];
   filesAnnexe : FileItem[] = [];
+  fileActe : FileItem[] = [];
+  formEnabled: boolean;
+  waiting: boolean;
+  defaultOpendata: string;
+  step:number;
+  totalSteps: number;
+  progress:number;
 
   /******/
   pastelForm! : FormGroup;
@@ -120,14 +125,12 @@ export class NoTdtFormComponent implements OnInit {
   matcher = new MyErrorStateMatcher();
 
   createFormControls() {
-    this.idDoc = new FormControl('');
+    this.acte_nature = new FormControl('', Validators.required);
     this.nature_autres = new FormControl('', Validators.required);
-    this.pastellLink = new FormControl('');
-    this.status = new FormControl('');
-    this.firstCtrl = new FormControl('', Validators.required);
+    this.objet = new FormControl('', Validators.required);
     this.numero_acte = new FormControl('', [Validators.required]);
     this.arrete = new FormControl('', Validators.required);
-    this.autre_document_attache = new FormControl('', Validators.required);
+    this.autre_document_attache = new FormControl('');
     this.classification = new FormControl('', Validators.required);
     this.date = new FormControl(moment(), Validators.required);
     this.opendata = new FormControl('', Validators.required);
@@ -140,18 +143,15 @@ export class NoTdtFormComponent implements OnInit {
 
   createForm() {
     this.firstFormGroup = new FormGroup({
-      firstCtrl: this.firstCtrl,
-      idDoc: this.idDoc,
-      status: this.status,
-      numero_acte: this.numero_acte,
-      pastellLink: this.pastellLink
+      objet: this.objet,
+      numero_de_lacte: this.numero_acte,
+      acte_nature: this.acte_nature,
+      nature_autre_detail: this.nature_autres,
+      date_de_lacte: this.date,
+      publication_open_data: this.opendata
     });
 
-    this.details = new FormGroup({
-      nature_autres: this.nature_autres,
-      date: this.date,
-      opendata: this.opendata
-    });
+
 
     this.secondFormGroup =  new FormGroup({
       arrete: this.arrete,
@@ -162,8 +162,7 @@ export class NoTdtFormComponent implements OnInit {
 
     this.pastelForm = new FormGroup({
       firstFormGroup: this.firstFormGroup,
-      secondFormGroup: this.secondFormGroup,
-      details: this.details
+      secondFormGroup: this.secondFormGroup
     });
   }
 
@@ -178,9 +177,109 @@ export class NoTdtFormComponent implements OnInit {
   ngOnInit() {
     this.createFormControls();
     this.createForm();
+    this.onChanges();
+    this.idDoc = '';
     this.isLinear = true;
     this.filesAnnexe = [];
+    this.fileActe = [];
+    this.formEnabled = false;
+    this.defaultOpendata = '3';
+    this.step = 0;
+    this.totalSteps = 8;
+    this.progress = 0;
+    this.waiting = false;
 
+  }
+
+  findValidControls():number {
+    const valid = [];
+    const controls = {...this.firstFormGroup.controls, ...this.secondFormGroup.controls};
+    for (const name in controls) {
+        if (controls[name].valid) {
+            valid.push(name);
+        }
+    }
+    return valid.length;
+}
+
+  onChanges() {
+    const that = this;
+    this.firstFormGroup.valueChanges.subscribe(val => {
+      that.step = this.findValidControls();
+      that.progress = this.step / this.totalSteps * 100;
+      if (that.firstFormGroup.valid) {
+        //format date
+        val.date_de_lacte = moment(val.date_de_lacte).format("YYYY-MM-DD");
+        this._apiClient.updateDoc(this.idDoc, val).then( (infos:any) => {
+          console.log(infos);
+        })
+      }
+    });
+
+  }
+
+  onFormSubmit() {
+    //Show spinner
+    this.toggleBtn()
+    // Vrrsement GED/OPENDATA
+    this._apiClient.sendDoc(this.idDoc,'orientation').then( (response:any) => {
+      if (response.action.result) {
+        let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc, 'link': this.pastellLink}});
+        this.toggleBtn();
+        this.disableForm();
+        this.formEnabled = false;
+      }
+
+    })
+
+  }
+
+  toggleBtn () {
+    const btn = document.getElementById('apply-btn');
+    if (btn.hasAttribute('busy')) {
+        btn.removeAttribute('busy');
+    } else {
+        btn.setAttribute('busy','');
+    }
+}
+
+  deleteActe(idDoc) {
+    this._apiClient.deleteDoc(idDoc).then( (infos:any) => {
+      console.log(infos);
+      if (infos.pastel.result) {
+        this.pastelForm.reset();
+        this.formEnabled = false;
+      }
+
+    })
+  }
+
+  async newActe() {
+    this.waiting = true;
+    this.pastelForm.reset();
+    this.acte_nature.setValue('6');
+    this.opendata.setValue(this.defaultOpendata);
+    const parameters:autresStudioSansTdt = {
+      type: 'autres-studio-sans-tdt'
+    }
+    this._apiClient.createDoc(parameters).then( (infos:any) => {
+      if (infos.pastel.info) {
+        this.idDoc = infos.pastel.id_d;
+        this.pastellLink =  infos.link;
+        this.filesAnnexe = [];
+        this.fileActe = [];
+        this.formEnabled = true;
+        this.waiting = false;
+        //let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc, 'link': this.pastellLink}});
+        console.log(infos.pastel.info);
+        /*if (infos.pastel.info.id_d) {
+          this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {
+            this.lastSendedParameters = parameters;
+            console.log(infos);
+          })
+        }*/
+      }
+    })
   }
 
   async onNewFile(event:Event) {
@@ -191,18 +290,23 @@ export class NoTdtFormComponent implements OnInit {
     const docsUploaded = this.filesAnnexe.length;
     for (let i = 0; i < files.length; i++) {
        const file = files.item(i);
-       const res = await this._apiClient.uploadFile(this.idDoc.value, name, file, i + docsUploaded);
+       const res = await this._apiClient.uploadFile(this.idDoc, name, file, i + docsUploaded);
        console.log( res );
+       if (element.required) { this.step +=1; }
+       this.progress = this.step / this.totalSteps * 100;
        if (multiple && name == "autre_document_attache") {
          this.filesAnnexe.push({ name : file.name, source: "autre_document_attache", index: i + docsUploaded });
+       } else {
+         this.fileActe.push({ name: file.name, source: name, index: i });
        }
     }
 
   }
 
   async removeFile(file:FileItem) {
-    let res:any = await this._apiClient.deleteFile(this.idDoc.value, file.source, file.index);
-    if (res.pastel.data.autre_document_attache) {
+    let res:any = await this._apiClient.deleteFile(this.idDoc, file.source, file.index);
+    if (file.source === "autre_document_attache") {
+      if (res.pastel.data.autre_document_attache) {
         //check is file is deleted
         const files:string[] = res.pastel.data.autre_document_attache;
         if (files.indexOf(file.name) == -1 ) {
@@ -216,12 +320,17 @@ export class NoTdtFormComponent implements OnInit {
     } else {
       this.filesAnnexe = [];
     }
+
+    } else {
+      this.fileActe = [];
+    }
+
     console.log(res);
   }
 
   getClassification() {
     if (this.idDoc && this.classifications.length == 0) {
-      this._apiClient.getClassification(this.idDoc.value).then( (infos: any) => {
+      this._apiClient.getClassification(this.idDoc).then( (infos: any) => {
         if (infos.externalData.classification) {
           let tmp = []
           for (let [k, v] of Object.entries(infos.externalData.classification)) {
@@ -236,81 +345,11 @@ export class NoTdtFormComponent implements OnInit {
 
   }
 
-  part1() {
-    if (this.firstFormGroup.invalid) {
-      return false;
-    }
-    const parameters:autresStudioSansTdt = {
-      type: 'autres-studio-sans-tdt',
-      objet: this.firstFormGroup.controls['firstCtrl'].value,
-      acte_nature: '6',
-      numero_de_lacte: this.numero_acte.value
-    }
-    if (!this.idDoc.value) {
-      this._apiClient.createDoc(parameters).then( (infos:any) => {
-        if (infos.pastel.info) {
-          this.firstFormGroup.patchValue({
-            idDoc : infos.pastel.id_d,
-            pastellLink: infos.link,
-            status: "0"
-          })
-          this.filesAnnexe = [];
-          let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc.value, 'link': this.pastellLink.value}});
-          console.log(infos.pastel.info);
-          if (infos.pastel.info.id_d) {
-            this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {
-              this.lastSendedParameters = parameters;
-              console.log(infos);
-            })
-          }
-        }
-      })
 
-    } else {
-      if (JSON.stringify(this.lastSendedParameters) != JSON.stringify(parameters) ){
-        this._apiClient.updateDoc(this.idDoc.value, parameters).then( (infos:any) => {
-          console.log(infos);
-        })
-      } else {
-        console.log("nothing to update");
-      }
-
-    }
-
-
-  }
 
   disableForm() {
     this.pastelForm.disable();
   }
 
-  part2() {
-    const parameters:autresStudioSansTdt = {
-      'nature_autre_detail': this.nature_autres.value,
-      'date_de_lacte': moment(this.date.value).format("YYYY-MM-DD"),
-      'publication_open_data' : (this.opendata.value==true?'3':'1')
-      //,'type_acte': '99_AU'
-    }
-
-    this._apiClient.updateDoc(this.idDoc.value, parameters).then( (infos:any) => {
-      console.log(infos);
-      //send tdt
-      this._apiClient.sendDoc(this.idDoc.value,'orientation').then( (infos:any) => {
-        console.log(infos);
-        let status;
-        if (infos.action!.result === true) {
-          status = "1";
-          this.disableForm();
-        } else {
-          status = "2";
-        }
-        this.firstFormGroup.patchValue({
-          status: status
-        })
-
-      })
-
-    })
-  }
 
 }
