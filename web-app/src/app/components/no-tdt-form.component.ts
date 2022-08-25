@@ -7,6 +7,7 @@ import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/mater
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, ErrorStateMatcher} from '@angular/material/core';
 import { HttpClient } from '@angular/common/http';
 import {DocCreated, DocUploaded} from '../interfaces/pastell';
+import { LocalService } from '../services/local.service';
 
 
 /** Error when invalid control is dirty, touched, or submitted. */
@@ -147,7 +148,8 @@ export class NoTdtFormComponent implements OnInit {
   constructor(
     private _apiClient: ApiClientService,
     public snackBar: MatSnackBar,
-    private http: HttpClient
+    private http: HttpClient,
+    private localStore: LocalService
     ) {}
 
   ngOnInit() {
@@ -168,6 +170,7 @@ export class NoTdtFormComponent implements OnInit {
     this.waiting_file = false;
     this.getReferentiels();
     this.natures_autres = [];
+    this.localStore.saveData('pastell', 'preprod');
 
   }
 
