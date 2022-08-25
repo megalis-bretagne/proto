@@ -18,6 +18,7 @@ import { DeliberationsComponent } from './components/deliberations.component';
 import { NavbarComponent, DialogInfos } from './components/navbar.component';
 import { ActesAutresComponent } from './components/actes-autres.component';
 import { PastellSnackComponent } from './components/pastell-snack.component';
+import {DocCreated, DocUploaded, PastellContent, PastellDocCreated, PastellDocInfo, PastellFileUploaded, PastellLastAction} from './interfaces/pastell';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { PastellSnackComponent } from './components/pastell-snack.component';
     ReactiveFormsModule,
     KeycloakAngularModule,
     HttpClientModule,
-    FlexLayoutModule,
+    FlexLayoutModule
   ],
   providers: [
     {

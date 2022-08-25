@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './services/auth.service';
+import { DocUploaded } from './interfaces/pastell';
 
 
 @Injectable({
@@ -72,7 +73,8 @@ export class ApiClientService {
       "file_name": file.name,
       "file_content": file
     }
-    return this.perform('post', `/document/${id_doc}/file/${element}/${numero}`, formData);
+    //return this.perform('post', `/document/${id_doc}/file/${element}/${numero}`, formData);
+     return this.http.post<DocUploaded>(`${environment.apiURL}/document/${id_doc}/file/${element}/${numero}`, formData).toPromise();
   }
 
   deleteFile(id_doc:string, element:string, numero:number) {
