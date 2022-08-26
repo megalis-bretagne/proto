@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent, SafeHtmlPipe } from './components/dashboard.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DeliberationsComponent } from './components/deliberations.component';
-import { NavbarComponent, DialogInfos } from './components/navbar.component';
+import { NavbarComponent, DialogNavBar } from './components/navbar.component';
 import { ActesAutresComponent } from './components/actes-autres.component';
 import { PastellSnackComponent } from './components/pastell-snack.component';
 import {DocCreated, DocUploaded, PastellContent, PastellDocCreated, PastellDocInfo, PastellFileUploaded, PastellLastAction} from './interfaces/pastell';
@@ -30,7 +30,7 @@ import {DocCreated, DocUploaded, PastellContent, PastellDocCreated, PastellDocIn
     DashboardComponent,
     SafeHtmlPipe,
     NavbarComponent,
-    DialogInfos,
+    DialogNavBar,
     PastellSnackComponent,
     ActesAutresComponent
   ],

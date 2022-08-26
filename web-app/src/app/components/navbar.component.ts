@@ -4,8 +4,14 @@ import { AuthService } from '../services/auth.service';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 export interface DialogData {
-  version: '';
+  version: string;
+  repository: string;
+  dialogId: string;
+  user: string;
+  organisme: string;
+  title:string;
 }
+
 
 @Component({
   selector: 'app-navbar',
@@ -14,8 +20,9 @@ export interface DialogData {
 })
 export class NavbarComponent implements OnInit {
 
-  version: String;
-  user: String;
+  version: string;
+  user: string;
+  organisme: string;
 
   constructor(
     private keycloakAuthService : AuthService,
@@ -24,12 +31,26 @@ export class NavbarComponent implements OnInit {
   ) {
     this.version = 'Non synchronisé';
     this.user = '';
+    this.organisme = '';
   }
 
   openInfosDialog() {
-    this.dialog.open(DialogInfos, {
+    this.dialog.open(DialogNavBar, {
       data: {
-        version: this.version
+        title : 'Informations',
+        version: this.version,
+        repository: 'https://github.com/spelhate/proto',
+        dialogId: 'infos'
+      }});
+  }
+
+  openUserDialog() {
+    this.dialog.open(DialogNavBar, {
+      data: {
+        title: 'Utilisateur',
+        user: this.user,
+        organisme: this.organisme,
+        dialogId: 'user'
       }});
   }
 
@@ -40,7 +61,9 @@ export class NavbarComponent implements OnInit {
 
     this.apiClient.getUser().then( (infos:any) => {
       this.user = infos.user;
+      console.log(infos);
       this.apiClient.setEntity(infos.details['id_e']);
+      this.organisme = infos.details.organisme;
       //this.docList.loadDocuments();
     } )
 
@@ -59,6 +82,8 @@ export class NavbarComponent implements OnInit {
   templateUrl: 'dialog-infos.html',
 })
 
-export class DialogInfos {
+export class DialogNavBar {
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 }
+
+
