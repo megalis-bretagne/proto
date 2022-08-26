@@ -51,8 +51,9 @@
             </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
+              <mat-label>Date</mat-label>
               <input matInput formControlName="date_de_lacte" [matDatepicker]="picker">
-              <mat-hint>YYYY-MM-DD</mat-hint>
+              <mat-hint>AAAA-MM-JJ</mat-hint>
               <mat-datepicker-toggle matSuffix [for]="picker">
                 <mat-icon matDatepickerToggleIcon>
                   calendar_month
