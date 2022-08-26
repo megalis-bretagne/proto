@@ -15,3 +15,13 @@
     line-height: 1.5;
     margin-left: 10px;
 }
+
+.logo img {
+  height:50px;
+  background-color: #fff;
+}
+a.logo {
+  margin-left: -15px;
+  margin-bottom: -9px;
+  padding-right: 10px;
+}
