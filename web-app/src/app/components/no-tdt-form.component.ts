@@ -209,7 +209,8 @@ export class NoTdtFormComponent implements OnInit {
   onChanges() {
     const that = this;
     this.firstFormGroup.valueChanges.subscribe(val => {
-     this.update(val);
+      const all_values = {...val, ...this.thirdFormGroup.value};
+      this.update(all_values);
     });
     this.thirdFormGroup.valueChanges.subscribe(val => {
       this.update(val);
