@@ -61,19 +61,13 @@
               </mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
-            <div class="form-group">
-                <mat-radio-group formControlName="publication_open_data">
-                  <mat-radio-button class="example-margin" value="3">Je publie en opendata</mat-radio-button>
-                  <mat-radio-button class="example-margin" value="1">Je ne sais pas</mat-radio-button>
-                </mat-radio-group>
-            </div>
           </form>
         </div>
         <mat-divider></mat-divider>
 
         <form [formGroup]="secondFormGroup" enctype = "multipart/form-data">
           <mat-grid-list cols="6" rowHeight="100px">
-            <mat-grid-tile class="grid-file" colspan="1">
+            <mat-grid-tile class="grid-file" colspan="2">
             <mat-label>Acte *</mat-label>
             <input type="file" class="file-upload" name="arrete" class="file-input" formControlName="arrete" (change)="onNewFile($event)" required #fileUpload>
             <div class="file-upload">
@@ -83,7 +77,7 @@
                 </button>
             </div>
             </mat-grid-tile>
-            <mat-grid-tile colspan="5">
+            <mat-grid-tile colspan="4">
               <mat-spinner color="accent" diameter="40" *ngIf="waiting_file" ></mat-spinner>
             <mat-chip-list class="mat-chip-list-stacked2" #chipList aria-label="Acte">
               <mat-chip selected color="primary" *ngFor="let file of fileActe" (removed)="removeFile(file)">
@@ -98,7 +92,7 @@
 
         <mat-grid-list cols="6" class="grid-file" *ngIf="annexesEnabled">
           <mat-divider></mat-divider>
-          <mat-grid-tile class="grid-file" colspan="1">
+          <mat-grid-tile class="grid-file" colspan="2">
             <mat-label>Annexes</mat-label>
             <input type="file" multiple class="file-upload" name="autre_document_attache" class="file-input" formControlName="autre_document_attache" (change)="onNewFile($event)" #fileUpload2>
             <div class="file-upload">
@@ -108,7 +102,7 @@
                 </button>
             </div>
           </mat-grid-tile>
-          <mat-grid-tile colspan="5">
+          <mat-grid-tile colspan="4">
             <mat-chip-list class="mat-chip-list-stacked" #chipList aria-label="Annexes selection">
               <mat-chip *ngFor="let file of filesAnnexe" (removed)="removeFile(file)">
                 {{file.name}}
@@ -125,6 +119,14 @@
       </mat-card-content>
       <mat-divider inset></mat-divider>
       <mat-card-actions  align="end">
+        <form [formGroup]="thirdFormGroup">
+          <div class="form-group">
+            <mat-radio-group formControlName="publication_open_data">
+              <mat-radio-button class="example-margin" value="3">Je publie en opendata</mat-radio-button>
+              <mat-radio-button class="example-margin" value="1">Je ne sais pas</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        </form>
 
         <button id="apply-btn" type="submit" mat-raised-button color="primary" [disabled]="pastelForm.invalid">
           <span class="my-loader" aria-hidden="true">

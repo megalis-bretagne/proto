@@ -79,6 +79,7 @@ export class NoTdtFormComponent implements OnInit {
   lastSendedParameters = {};
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
+  thirdFormGroup!: FormGroup;
   objet!: FormControl;
   nature_autres!:FormControl;
   idDoc:string;
@@ -123,8 +124,7 @@ export class NoTdtFormComponent implements OnInit {
       acte_nature: this.acte_nature,
       nature_autre_detail: this.nature_autres,
       date_de_lacte: this.date,
-      classification: this.classification,
-      publication_open_data: this.opendata
+      classification: this.classification
     });
 
 
@@ -135,10 +135,15 @@ export class NoTdtFormComponent implements OnInit {
 
     })
 
+    this.thirdFormGroup = new FormGroup({
+      publication_open_data: this.opendata
+    });
+
 
     this.pastelForm = new FormGroup({
       firstFormGroup: this.firstFormGroup,
-      secondFormGroup: this.secondFormGroup
+      secondFormGroup: this.secondFormGroup,
+      thirdFormGroup : this.thirdFormGroup
     });
   }
 
@@ -189,19 +194,26 @@ export class NoTdtFormComponent implements OnInit {
     this.progress = (this.step += step) / this.totalSteps * 100;
   }
 
+  update(val) {
+    this.step = this.findValidControls();
+    this.refreshProgress(0);
+    if (this.firstFormGroup.valid && this.thirdFormGroup.valid) {
+      //format date
+      val.date_de_lacte = moment(val.date_de_lacte).format("YYYY-MM-DD");
+      this._apiClient.updateDoc(this.idDoc, val).then( (infos:any) => {
+        console.log(infos);
+      })
+    }
+  }
+
   onChanges() {
     const that = this;
     this.firstFormGroup.valueChanges.subscribe(val => {
-      that.step = this.findValidControls();
-      that.refreshProgress(0);
-      if (that.firstFormGroup.valid) {
-        //format date
-        val.date_de_lacte = moment(val.date_de_lacte).format("YYYY-MM-DD");
-        this._apiClient.updateDoc(this.idDoc, val).then( (infos:any) => {
-          console.log(infos);
-        })
-      }
+     this.update(val);
     });
+    this.thirdFormGroup.valueChanges.subscribe(val => {
+      this.update(val);
+     });
 
   }
 
