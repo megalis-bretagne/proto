@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  apiURL : 'https://api.delib.csm.ovh',
+  modules: ['actes']
 };

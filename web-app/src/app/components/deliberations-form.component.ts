@@ -182,7 +182,7 @@ export class DeliberationsFormComponent implements OnInit {
           })
 
           this.getClassification();
-          let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': this.idDoc.value, 'link': this.pastellLink.value}});
+          let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': 'a bien été créé', 'document': this.idDoc.value, 'link': this.pastellLink.value}});
           console.log(infos.pastel.info);
           if (infos.pastel.info.id_d) {
             this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {
