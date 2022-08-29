@@ -190,7 +190,7 @@ export class NoTdtFormComponent implements OnInit {
 
   findValidControls():number {
     const valid = [];
-    const controls = {...this.firstFormGroup.controls, ...this.secondFormGroup.controls};
+    const controls = {...this.firstFormGroup.controls, ...this.secondFormGroup.controls, ...this.thirdFormGroup.controls};
     for (const name in controls) {
         if (controls[name].valid) {
             valid.push(name);
