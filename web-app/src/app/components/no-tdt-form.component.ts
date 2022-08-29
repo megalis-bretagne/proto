@@ -53,6 +53,15 @@ interface NatureItem  {
   value: string
 };
 
+interface ClassificationGroup {
+  label: string;
+  values: string[];
+}
+
+interface Classification {
+  groups: ClassificationGroup[]
+}
+
 @Component({
   selector: 'app-no-tdt-form',
   templateUrl: './no-tdt-form.component.html',
@@ -90,7 +99,7 @@ export class NoTdtFormComponent implements OnInit {
   classification!: FormControl;
   opendata!: FormControl;
   numero_acte!: FormControl;
-  classifications : string[] = [];
+  classifications : Classification;
   natures_autres :NatureItem[] = [];
   filesAnnexe : FileItem[] = [];
   fileActe : FileItem[] = [];
