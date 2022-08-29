@@ -76,10 +76,10 @@
         <form [formGroup]="secondFormGroup" enctype = "multipart/form-data">
           <mat-grid-list cols="6" rowHeight="100px">
             <mat-grid-tile class="grid-file" colspan="2">
-            <mat-label>Acte *</mat-label>
-            <input type="file" class="file-upload" name="arrete" class="file-input" formControlName="arrete" (change)="onNewFile($event)" required #fileUpload>
+            <mat-label>Acte * (pdf)</mat-label>
+            <input type="file" class="file-upload" name="arrete" class="file-input" accept="application/pdf" formControlName="arrete" (change)="onNewFile($event)" required #fileUpload>
             <div class="file-upload">
-                <button mat-mini-fab color="primary" class="upload-btn" matTooltip="Ajouter un fichier"
+                <button mat-mini-fab color="primary" class="upload-btn" matTooltip="Ajouter un fichier pdf"
                   (click)="fileUpload.click()">
                     <mat-icon>attach_file</mat-icon>
                 </button>
