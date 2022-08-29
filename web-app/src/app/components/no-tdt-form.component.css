@@ -89,4 +89,7 @@ button#apply-btn {
   margin-left: 50px;
 }
 
+#objet.mat-form-field {
+  width:100%;
+}
 

@@ -15,10 +15,18 @@
         <div class="custom-center">
           <form [formGroup]="firstFormGroup">
             <input formControlName="acte_nature" hidden>
-            <mat-form-field appearance="outline">
-              <mat-label>Objet</mat-label>
-              <input matInput placeholder="Objet du document" formControlName="objet" required >
-            </mat-form-field>
+            <div>
+              <mat-form-field id="objet" appearance="outline">
+                <mat-label>Objet</mat-label>
+                <input matInput placeholder="Objet du document" formControlName="objet" required pattern="[^€Œ]{1,256}" required [errorStateMatcher]="matcher">
+                <mat-error *ngIf="objet.hasError('pattern') && !objet.hasError('required')">
+                  256 caractères maxi. Caractères interdits : Œ, €.
+                </mat-error>
+                <mat-error *ngIf="objet.hasError('required')">
+                  Numéro d'acte est <strong>requis</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
             <mat-form-field appearance="outline">
               <mat-label>Numéro de l'acte</mat-label>
               <input matInput placeholder="Numéro d'acte" formControlName="numero_de_lacte" required pattern="[A-Z0-9_]{4,12}" [errorStateMatcher]="matcher">
