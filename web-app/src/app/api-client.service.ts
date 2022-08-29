@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './services/auth.service';
 import { DocUploaded } from './interfaces/pastell';
@@ -74,7 +75,7 @@ export class ApiClientService {
       "file_content": file
     }
     //return this.perform('post', `/document/${id_doc}/file/${element}/${numero}`, formData);
-     return this.http.post<DocUploaded>(`${environment.apiURL}/document/${id_doc}/file/${element}/${numero}`, formData).toPromise();
+     return lastValueFrom(this.http.post<DocUploaded>(`${environment.apiURL}/document/${id_doc}/file/${element}/${numero}`, formData));
   }
 
   deleteFile(id_doc:string, element:string, numero:number) {
@@ -88,13 +89,13 @@ export class ApiClientService {
 
     switch (method) {
       case 'delete':
-        return this.http.delete(url).toPromise();
+        return lastValueFrom(this.http.delete(url));
       case 'get':
-        return this.http.get(url).toPromise();
+        return lastValueFrom(this.http.get(url));
       case 'post':
-        return this.http.post(url, data).toPromise();
+        return lastValueFrom(this.http.post(url, data));
       case 'patch':
-        return this.http.patch(url, data).toPromise();
+        return lastValueFrom(this.http.patch(url, data));
       default:
         return 'bad';
     }
