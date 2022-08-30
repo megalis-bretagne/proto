@@ -4,7 +4,11 @@
 
 export const environment = {
   production: false,
+  version:'beta 1',
   apiURL : 'http://localhost:5005',
+  marqueBlancheUrl : 'https://data-preprod.megalis.bretagne.bzh/',
+  opendataToolUrl: 'https://data-publication-preprod.megalis.bretagne.bzh/',
+  repositoryUrl: 'https://github.com/megalis-bretagne/proto',
   modules: ['deliberations', 'actes']
 };
 

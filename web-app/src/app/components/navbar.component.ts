@@ -2,9 +2,11 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { ApiClientService } from '../api-client.service';
 import { AuthService } from '../services/auth.service';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { environment } from 'src/environments/environment';
 
 export interface DialogData {
   version: string;
+  pastellVersion: string;
   repository: string;
   dialogId: string;
   user: string;
@@ -21,17 +23,25 @@ export interface DialogData {
 export class NavbarComponent implements OnInit {
 
   version: string;
+  pastellVersion: string;
   user: string;
   organisme: string;
+  opendataToolUrl: string;
+  marqueBlancheUrl: string;
+  repositoryUrl: string;
 
   constructor(
     private keycloakAuthService : AuthService,
     private apiClient: ApiClientService,
     public dialog: MatDialog
   ) {
-    this.version = 'Non synchronisé';
+    this.version = environment.version;
+    this.pastellVersion = 'Non synchronisé';
     this.user = '';
     this.organisme = '';
+    this.marqueBlancheUrl = environment.marqueBlancheUrl;
+    this.opendataToolUrl = environment.opendataToolUrl;
+    this.repositoryUrl = environment.repositoryUrl;
   }
 
   openInfosDialog() {
@@ -39,7 +49,8 @@ export class NavbarComponent implements OnInit {
       data: {
         title : 'Informations',
         version: this.version,
-        repository: 'https://github.com/spelhate/proto',
+        pastellVersion: this.pastellVersion,
+        repository: this.repositoryUrl,
         dialogId: 'infos'
       }});
   }
@@ -47,7 +58,7 @@ export class NavbarComponent implements OnInit {
   openUserDialog() {
     this.dialog.open(DialogNavBar, {
       data: {
-        title: 'Utilisateur',
+        title: 'Mon compte',
         user: this.user,
         organisme: this.organisme,
         dialogId: 'user'
@@ -56,7 +67,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.apiClient.getVersion().then( (infos:any) => {
-      this.version = infos.pastel;
+      this.pastellVersion = infos.pastel;
     } )
 
     this.apiClient.getUser().then( (infos:any) => {
@@ -64,7 +75,7 @@ export class NavbarComponent implements OnInit {
       console.log(infos);
       this.apiClient.setEntity(infos.details['id_e']);
       this.organisme = infos.details.organisme;
-      //this.docList.loadDocuments();
+      this.marqueBlancheUrl = `${this.marqueBlancheUrl}?siren=${infos.details['siren']}`
     } )
 
   }

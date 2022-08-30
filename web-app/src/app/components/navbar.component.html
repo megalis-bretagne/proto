@@ -3,7 +3,7 @@
       <img src="assets/images/megalis_logo.png" title="Accueil" alt="Accueil" class="ng-star-inserted">
     </a>
     <span>Prototype</span>
-    <span class="beta">beta</span>
+    <span class="beta">{{version}}</span>
     <span class="toolbar-spacer"></span>
     <button mat-icon-button class="example-icon person-icon" aria-label="" (click)="openUserDialog()">
       <mat-icon>person</mat-icon>
@@ -17,10 +17,19 @@
           <mat-icon>home</mat-icon>
           <span>Accueil</span>
         </button>
+        <a mat-menu-item href="{{opendataToolUrl}}" target="_blank">
+          <mat-icon>dataset</mat-icon>
+          <span>Outil de publication opendata</span>
+        </a>
+        <a mat-menu-item href="{{marqueBlancheUrl}}" target="_blank">
+          <mat-icon>dataset_linked</mat-icon>
+          <span>Marque blanche</span>
+        </a>
         <button mat-menu-item (click)="openInfosDialog()">
           <mat-icon>info</mat-icon>
-          <span>infos</span>
+          <span>A propos</span>
         </button>
+        <mat-divider></mat-divider>
         <button mat-menu-item  (click)="logout($event)">
           <mat-icon>logout</mat-icon>
           <span>Déconnection</span>

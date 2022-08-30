@@ -1,22 +1,44 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
+<mat-divider></mat-divider>
 <div mat-dialog-content *ngIf="data.dialogId == 'infos'">
-  Version utilisée de Pastell:
-  <ul>
-    <li>
-      {{data.version}}
-    </li>
-    <li>
-      preprod
-    </li>
-    <li>code <a href="{{data.repository}}" target="_blank">source</a> de l'application</li>
-  </ul>
+  <mat-list>
+    <mat-list-item>
+      <mat-icon mat-list-icon>alternate_email</mat-icon>
+      <div mat-line>Application développée par <strong>Megalis Bretagne</strong></div>
+    </mat-list-item>
+    <mat-list-item>
+      <mat-icon mat-list-icon>terminal</mat-icon>
+      <div mat-line>Synchronisé avec <strong>Pastel</strong> - {{data.pastellVersion}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <mat-icon mat-list-icon>info</mat-icon>
+      <div mat-line>version de l'application : <strong>{{data.version}}</strong></div>
+    </mat-list-item>
+    <mat-list-item>
+      <mat-icon mat-list-icon>share</mat-icon>
+      <div mat-line>code <a href="{{data.repository}}" target="_blank">source</a> de l'application</div>
+    </mat-list-item>
+    <mat-list-item>
+      <mat-icon mat-list-icon>contact_support</mat-icon>
+      <div mat-line>Signaler un bug / demander une évolution sur <a href="{{data.repository}}/issues" target="_blank">github</a></div>
+    </mat-list-item>
+  </mat-list>
 </div>
 <div mat-dialog-content *ngIf="data.dialogId == 'user'">
-
-    <p><mat-icon>account_circle</mat-icon>{{data.user}}</p>
-    <p><mat-icon>home</mat-icon>{{data.organisme}}</p>
+  <mat-divider></mat-divider>
+  <mat-list>
+    <mat-list-item>
+      <mat-icon mat-list-icon>account_circle</mat-icon>
+      <div mat-line>{{data.user}}</div>
+    </mat-list-item>
+    <mat-list-item>
+      <mat-icon mat-list-icon>home</mat-icon>
+      <div mat-line>{{data.organisme}}</div>
+    </mat-list-item>
+  </mat-list>
 
 </div>
+<mat-divider></mat-divider>
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close>Fermer</button>
 </div>

@@ -68,6 +68,7 @@ def user():
         request2 = requests.get(root_url + ressource2, auth=HTTPBasicAuth(u, p))
         current_user = json.loads(request2.text)
         current_user['organisme'] = organisme
+        current_user['siren'] = siren
         ressource3 = '/utilisateur/%s/role' % id_u
         request3 = requests.get(root_url + ressource3, auth=HTTPBasicAuth(u, p))
         current_user['roles'] = json.loads(request3.text)
