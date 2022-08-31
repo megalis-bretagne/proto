@@ -3,10 +3,22 @@ from flask import Flask, json, g, request
 from flask_cors import CORS
 import requests, urllib
 from requests.auth import HTTPBasicAuth
+import logging
+from logging.handlers import TimedRotatingFileHandler
+
 
 
 app = Flask(__name__, instance_relative_config=True)
 CORS(app)
+
+FORMATTER = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(message)s")
+LOG_FILE = "/var/log/proto/proto.log"
+logger = logging.getLogger('proto')
+logger.setLevel(logging.INFO)
+file_handler = TimedRotatingFileHandler(LOG_FILE, when='midnight')
+file_handler.setFormatter(FORMATTER)
+logger.addHandler(file_handler)
+logger.propagate = False
 
 app.config.from_object('config')
 u = app.config['PASTELL_USER']
@@ -79,6 +91,7 @@ def user():
 
   response = { "erreur" : "utilisateur %s non trouvé dans Pastell " % g.username}
   if g.uid in PASTELL_SESSIONS.keys():
+    logger.info('%s - %s' % (g.user, "Connecté" ))
     response = PASTELL_SESSIONS[g.uid]
   return json_response(response)
 
@@ -90,12 +103,14 @@ def user():
 @app.route("/document/<string:id_doc>/action/<string:id_action>", methods=["POST"])
 @login_required
 def document(id_doc=None, element=None, field=None, id_action=None):
-  if g.uid in PASTELL_SESSIONS.keys():
-    print (PASTELL_SESSIONS[g.uid])
-  else:
-    print('Infos manquantes : id_e')
+  checkedAuth = checkAuth()
+  allowed_role = checkedAuth['allowed_role']
+  USER = checkedAuth['user']
+  IDE = checkedAuth['id_e']
+  if  not allowed_role:
+    logger.warning('%s - %s - %s' % (USER,  IDE, "Role non autorisé" ))
     return json_response([])
-  IDE = PASTELL_SESSIONS[g.uid]['details']['id_e']
+
   if request.method == 'GET':
     ressource = '/entite/%s/document' % IDE
     PA_request = requests.get(root_url + ressource, auth=HTTPBasicAuth(u, p))
@@ -108,33 +123,44 @@ def document(id_doc=None, element=None, field=None, id_action=None):
     params = request.get_json()
     PA_request = requests.post(root_url + ressource, data=params, auth=HTTPBasicAuth(u, p))
     data = json.loads(PA_request.text)
-    print(data)
-    return json_response({'pastel': data, 'link': '%s/Document/detail?id_d=%s&id_e=%s' % (root_url.split('/api/')[0], data['info']['id_d'],IDE )})
+    #TODO Check if it is ok
+    logger.info('%s - %s - %s' % (USER, "Document créé" , data['id_d']))
+    return json_response({'pastel': data, 'link': '%s/Document/detail?id_d=%s&id_e=%s' % (root_url.split('/api/')[0], data['id_d'],IDE )})
 
   elif request.method == 'POST' and id_doc and id_action:
     ressource = '/entite/%s/document/%s/action/%s' % (IDE, id_doc, id_action)
     PA_request = requests.post(root_url + ressource, auth=HTTPBasicAuth(u, p))
     data = json.loads(PA_request.text)
+    logger.info('%s - %s - %s' % (USER, "Document publié" , id_doc))
     return json_response({'action': data})
 
   elif request.method == 'PATCH':
     ressource = '/entite/%s/document/%s' % (IDE,id_doc)
     params = request.get_json()
-    print (params)
     PA_request = requests.patch(root_url + ressource, data=params, auth=HTTPBasicAuth(u, p))
-    print(PA_request.text)
     data = json.loads(PA_request.text)
+    logger.info('%s - %s - %s - %s' % (USER, "Document modifié" , id_doc, params))
     return json_response({'pastel': data})
 
   elif request.method == 'DELETE' and id_doc:
     ressource = '/entite/%s/document/%s/action/supression' % (IDE, id_doc)
     PA_request = requests.post(root_url + ressource, auth=HTTPBasicAuth(u, p))
     data = json.loads(PA_request.text)
+    logger.info('%s - %s - %s' % (USER, "Document supprimé" , id_doc))
     return json_response({'pastel': data})
 
 @app.route("/document/<string:id_doc>/file/<string:element>/<string:numero>", methods=["POST", "DELETE"])
 @login_required
 def addFile(id_doc, element, numero='0'):
+  checkedAuth = checkAuth()
+  allowed_role = checkedAuth['allowed_role']
+  USER = checkedAuth['user']
+  IDE = checkedAuth['id_e']
+  if  not allowed_role:
+    logger.warning('%s - %s - %s' % (USER,  IDE, "Role non autorisé" ))
+    return json_response([])
+
+
   ressource = '/entite/%s/document/%s/file/%s/%s' % (PASTELL_SESSIONS[g.uid]['details']['id_e'], id_doc, element, numero)
   if request.method == 'POST' and id_doc and element:
     # AJOUT Fichier
@@ -144,11 +170,13 @@ def addFile(id_doc, element, numero='0'):
       file=request.files['file_content'].read()
       PA_request = requests.post(root_url + ressource, files={'file_content': file}, data = { "file_name": filename}, auth=HTTPBasicAuth(u, p))
       data = json.loads(PA_request.text)
+      logger.info('%s - %s - %s - %s' % (USER, id_doc, element, "Fichier publié" ))
       return json_response({'pastel': data})
 
   elif request.method == 'DELETE'and id_doc and element:
     PA_request2 = requests.delete(root_url + ressource, auth=HTTPBasicAuth(u, p))
     data2 = json.loads(PA_request2.text)
+    logger.info('%s - %s - %s - %s' % (USER, id_doc, element, "Fichier supprimé" ))
     return json_response({'pastel': data2})
 
 
@@ -167,6 +195,18 @@ def externalData(id_doc, field):
 def json_response(payload, status=200):
  return (json.dumps(payload), status, {'content-type': 'application/json'})
 
+def checkAuth():
+  global PASTELL_SESSIONS
+  allowed_role = False
+  if g.uid in PASTELL_SESSIONS.keys():
+    user = PASTELL_SESSIONS[g.uid]['user']
+    ide = PASTELL_SESSIONS[g.uid]['details']['id_e']
+    #check for allowed roles
+    roles = PASTELL_SESSIONS[g.uid]['details']['roles']
+    for role in roles:
+      if role['role'] in ['admin_default', 'user_default']:
+        allowed_role = role['role']
+        return {'user': user, 'id_e': ide, 'allowed_role': allowed_role}
 
 def getAllPastellEntities():
   global PASTELL_ENTITIES
