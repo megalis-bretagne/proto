@@ -37,6 +37,7 @@
                 Numéro d'acte est <strong>requis</strong>
               </mat-error>
             </mat-form-field>
+
             <mat-form-field appearance="outline">
               <mat-label>Nature</mat-label>
               <mat-select
@@ -49,9 +50,9 @@
                   </mat-option>
             </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" id="classification-select">
               <mat-label>Classification</mat-label>
-              <mat-select formControlName="classification" class="form-select">
+              <mat-select formControlName="classification" class="form-select" panelClass="panel-classification">
                   <mat-optgroup *ngFor="let group of classifications.groups" [label]="group.label" disabled="false">
                     <mat-option *ngFor="let item of group.values" [value]="item">
                     {{item}}

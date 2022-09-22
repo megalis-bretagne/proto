@@ -93,3 +93,7 @@ button#apply-btn {
   width:100%;
 }
 
+#classification-select {
+  width: 400px;
+}
+

@@ -10,3 +10,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .grid-file>.mat-grid-tile-content {
     justify-content: start;
   }
+
+.panel-classification.mat-select-panel {
+min-width: 500px;
+}
