@@ -156,8 +156,9 @@
 
       <mat-toolbar class="bottom-toolbar">
         <button matTooltip="Publier un nouveau document" matTooltipPosition="above" *ngIf="!formEnabled" mat-fab color="primary" aria-label="Publier un nouvel acte" (click)="newActe()">
-          <mat-icon>edit</mat-icon>
+          <mat-icon>add</mat-icon>
         </button>
+        <span *ngIf="!formEnabled">Ajouter</span>
         <button matTooltip="Supprimer le document courant" matTooltipPosition="above" *ngIf="formEnabled" mat-fab color="warn" aria-label="Supprimer" (click)="deleteActe(idDoc)">
           <mat-icon>delete</mat-icon>
         </button>
