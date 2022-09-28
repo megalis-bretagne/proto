@@ -267,7 +267,7 @@ export class NoTdtFormComponent implements OnInit {
   async newActe() {
     this.waiting = true;
     this.pastelForm.reset();
-    this.acte_nature.setValue('6');
+    this.acte_nature.setValue('7');
     this.opendata.setValue(this.defaultOpendata);
     const parameters = {
       type: 'autres-studio-sans-tdt'
