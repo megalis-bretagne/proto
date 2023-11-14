@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {KeycloakService} from 'keycloak-angular';
-import {Keycloak} from 'keycloak-angular/lib/core/services/keycloak.service';
 import {SettingsService} from '../../environments/settings.service';
 
 @Injectable({

@@ -89,14 +89,14 @@
             </mat-grid-tile>
             <mat-grid-tile colspan="4">
               <mat-spinner color="accent" diameter="40" *ngIf="waiting_file" ></mat-spinner>
-            <mat-chip-list class="mat-chip-list-stacked2" #chipList aria-label="Acte">
-              <mat-chip selected color="primary" *ngFor="let file of fileActe" (removed)="removeFile(file)">
+            <mat-chip-listbox class="mat-chip-list-stacked2" #chipList aria-label="Acte">
+              <mat-chip-option selected color="primary" *ngFor="let file of fileActe" (removed)="removeFile(file)">
                 {{file.name}}
                 <button matChipRemove matTooltip="Supprimer ce fichier">
                   <mat-icon>cancel</mat-icon>
                 </button>
-              </mat-chip>
-            </mat-chip-list>
+              </mat-chip-option>
+            </mat-chip-listbox>
           </mat-grid-tile>
           </mat-grid-list>
 
@@ -113,14 +113,14 @@
             </div>
           </mat-grid-tile>
           <mat-grid-tile colspan="4">
-            <mat-chip-list class="mat-chip-list-stacked" #chipList aria-label="Annexes selection">
-              <mat-chip *ngFor="let file of filesAnnexe" (removed)="removeFile(file)">
+            <mat-chip-listbox  class="mat-chip-list-stacked" #chipList aria-label="Annexes selection">
+              <mat-chip-option *ngFor="let file of filesAnnexe" (removed)="removeFile(file)">
                 {{file.name}}
                 <button matChipRemove matTooltip="Supprimer ce fichier">
                   <mat-icon>cancel</mat-icon>
                 </button>
-              </mat-chip>
-            </mat-chip-list>
+              </mat-chip-option>
+            </mat-chip-listbox>
           </mat-grid-tile>
         </mat-grid-list>
 
