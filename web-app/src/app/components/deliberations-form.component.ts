@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {NgForm, FormGroup, Validators, FormControl, FormGroupDirective} from '@angular/forms';
+import {NgForm, UntypedFormGroup, Validators, UntypedFormControl, FormGroupDirective} from '@angular/forms';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PastellSnackComponent } from '../components/pastell-snack.component';
 import { ApiClientService } from '../api-client.service';
@@ -8,7 +8,7 @@ import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, ErrorStateMatcher} from 
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
@@ -60,41 +60,41 @@ export const MY_FORMATS = {
 })
 export class DeliberationsFormComponent implements OnInit {
   isLinear: boolean;
-  status!:FormControl;
-  pastellLink!:FormControl;
+  status!:UntypedFormControl;
+  pastellLink!:UntypedFormControl;
   lastSendedParameters = {};
-  firstFormGroup!: FormGroup;
-  secondFormGroup!: FormGroup;
-  details!: FormGroup;
-  firstCtrl!: FormControl;
-  idDoc!:FormControl;
-  arrete!: FormControl;
-  date!: FormControl;
+  firstFormGroup!: UntypedFormGroup;
+  secondFormGroup!: UntypedFormGroup;
+  details!: UntypedFormGroup;
+  firstCtrl!: UntypedFormControl;
+  idDoc!:UntypedFormControl;
+  arrete!: UntypedFormControl;
+  date!: UntypedFormControl;
   //idDoc = '';
-  classification!: FormControl;
-  opendata!: FormControl;
-  numero_acte!: FormControl;
+  classification!: UntypedFormControl;
+  opendata!: UntypedFormControl;
+  numero_acte!: UntypedFormControl;
   classifications : string[] = [];
 
   /******/
-  pastelForm! : FormGroup;
+  pastelForm! : UntypedFormGroup;
 
   matcher = new MyErrorStateMatcher();
 
   createFormControls() {
-    this.idDoc = new FormControl('');
-    this.pastellLink = new FormControl('');
-    this.status = new FormControl('');
-    this.firstCtrl = new FormControl('', Validators.required);
-    this.numero_acte = new FormControl('', [Validators.required]);
-    this.arrete = new FormControl('', Validators.required);
-    this.classification = new FormControl('', Validators.required);
-    this.date = new FormControl(moment(), Validators.required);
-    this.opendata = new FormControl('', Validators.required);
+    this.idDoc = new UntypedFormControl('');
+    this.pastellLink = new UntypedFormControl('');
+    this.status = new UntypedFormControl('');
+    this.firstCtrl = new UntypedFormControl('', Validators.required);
+    this.numero_acte = new UntypedFormControl('', [Validators.required]);
+    this.arrete = new UntypedFormControl('', Validators.required);
+    this.classification = new UntypedFormControl('', Validators.required);
+    this.date = new UntypedFormControl(moment(), Validators.required);
+    this.opendata = new UntypedFormControl('', Validators.required);
   }
 
   createForm() {
-    this.firstFormGroup = new FormGroup({
+    this.firstFormGroup = new UntypedFormGroup({
       firstCtrl: this.firstCtrl,
       idDoc: this.idDoc,
       status: this.status,
@@ -102,18 +102,18 @@ export class DeliberationsFormComponent implements OnInit {
       pastellLink: this.pastellLink
     });
 
-    this.details = new FormGroup({
+    this.details = new UntypedFormGroup({
       classification: this.classification,
       date: this.date,
       opendata: this.opendata
     });
 
-    this.secondFormGroup =  new FormGroup({
+    this.secondFormGroup =  new UntypedFormGroup({
       arrete: this.arrete
     })
 
 
-    this.pastelForm = new FormGroup({
+    this.pastelForm = new UntypedFormGroup({
       firstFormGroup: this.firstFormGroup,
       secondFormGroup: this.secondFormGroup,
       details: this.details
