@@ -13,7 +13,7 @@ import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { SettingsHttpService } from 'src/environments/settings.http.service';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent, SafeHtmlPipe } from './components/dashboard.component';
-import { FlexLayoutModule } from '@angular/flex-layout';
+// import { FlexLayoutModule } from '@angular/flex-layout';
 import { DeliberationsComponent } from './components/deliberations.component';
 import { NavbarComponent, DialogNavBar } from './components/navbar.component';
 import { ActesAutresComponent } from './components/actes-autres.component';
@@ -42,8 +42,8 @@ import {DocCreated, DocUploaded, PastellContent, PastellDocCreated, PastellDocIn
     FormsModule,
     ReactiveFormsModule,
     KeycloakAngularModule,
-    HttpClientModule,
-    FlexLayoutModule
+    HttpClientModule
+    
   ],
   providers: [
     {
