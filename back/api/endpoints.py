@@ -1,7 +1,7 @@
 from .middlewares import login_required
 from flask import Flask, json, g, request
 from flask_cors import CORS
-import requests, urllib
+import requests
 from requests.auth import HTTPBasicAuth
 import logging
 from logging.handlers import TimedRotatingFileHandler

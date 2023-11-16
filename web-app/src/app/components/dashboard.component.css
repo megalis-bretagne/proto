@@ -4,3 +4,15 @@
     padding-right: 16px;
 }
 
+.cards {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+
+}
+
+.card-item {
+    width: 30%;
+    padding: 10px;
+    justify-content: center;
+}
