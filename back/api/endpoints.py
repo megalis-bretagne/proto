@@ -1,26 +1,24 @@
-from .middlewares import login_required
 from flask import Flask, json, g, request
 from flask_cors import CORS
 import requests
 from requests.auth import HTTPBasicAuth
 import logging
-from logging.handlers import TimedRotatingFileHandler
+
+from back.api import login_required
+
+logging.basicConfig(
+        format="%(asctime)s.%(msecs)03d : %(levelname)s : %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 
 app = Flask(__name__, instance_relative_config=True)
-CORS(app)
+CORS(app, resources={r"*": {"origins": "*"}})
 
-FORMATTER = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(message)s")
-LOG_FILE = "/var/log/proto/proto.log"
-logger = logging.getLogger('proto')
-logger.setLevel(logging.INFO)
-file_handler = TimedRotatingFileHandler(LOG_FILE, when='midnight')
-file_handler.setFormatter(FORMATTER)
-logger.addHandler(file_handler)
-logger.propagate = False
-
-app.config.from_object('config')
+app.config.from_object('back.config.config')
 u = app.config['PASTELL_USER']
 p = app.config['PASTELL_PASSWORD']
 restricted_roles =  app.config['RESTRITED_ROLES']
@@ -141,7 +139,7 @@ def document(id_doc=None, element=None, field=None, id_action=None):
     if status == 201:
       data = json.loads(PA_request.text)
       logger.info('%s - %s - %s' % (USER, "Document créé" , data['id_d']))
-      return json_response({'pastel': data, 'link': '%s/Document/detail?id_d=%s&id_e=%s' % (root_url.split('/api/')[0], data['id_d'],IDE )}, status)
+      return json_response({'pastel': data, 'link': '%s/Document/detail?id_d=%s&id_e=%s' % (root_url.split('/back/')[0], data['id_d'],IDE )}, status)
     else:
       return json_response({'status': 'error'}, status)
 
@@ -269,5 +267,5 @@ def getAllPastellEntities():
 
   print("Referentiel des entités chargé")
 
-getAllPastellEntities()
+#getAllPastellEntities()
 
