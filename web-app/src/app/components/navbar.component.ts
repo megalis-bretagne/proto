@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { ApiClientService } from '../api-client.service';
 import { AuthService } from '../services/auth.service';
-import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 
 export interface DialogData {
   version: string;

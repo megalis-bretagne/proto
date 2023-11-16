@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {NgForm, FormGroup, Validators, FormControl, FormGroupDirective} from '@angular/forms';
-import { MatSnackBar } from "@angular/material/snack-bar";
+import {NgForm, UntypedFormGroup, Validators, UntypedFormControl, FormGroupDirective} from '@angular/forms';
 import { PastellSnackComponent } from '../components/pastell-snack.component';
 import { ApiClientService } from '../api-client.service';
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
@@ -12,7 +11,7 @@ import { LocalService } from '../services/local.service';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
@@ -25,6 +24,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment} from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const moment = _rollupMoment || _moment;
 
@@ -86,19 +86,19 @@ export class NoTdtFormComponent implements OnInit {
   annexesEnabled: boolean;
   pastellLink:string;
   lastSendedParameters = {};
-  firstFormGroup!: FormGroup;
-  secondFormGroup!: FormGroup;
-  thirdFormGroup!: FormGroup;
-  objet!: FormControl;
-  nature_autres!:FormControl;
+  firstFormGroup!: UntypedFormGroup;
+  secondFormGroup!: UntypedFormGroup;
+  thirdFormGroup!: UntypedFormGroup;
+  objet!: UntypedFormControl;
+  nature_autres!:UntypedFormControl;
   idDoc:string;
-  arrete!: FormControl;
-  autre_document_attache!: FormControl;
-  date!: FormControl;
-  acte_nature!: FormControl;
-  classification!: FormControl;
-  opendata!: FormControl;
-  numero_acte!: FormControl;
+  arrete!: UntypedFormControl;
+  autre_document_attache!: UntypedFormControl;
+  date!: UntypedFormControl;
+  acte_nature!: UntypedFormControl;
+  classification!: UntypedFormControl;
+  opendata!: UntypedFormControl;
+  numero_acte!: UntypedFormControl;
   classifications : Classification;
   natures_autres :NatureItem[] = [];
   filesAnnexe : FileItem[] = [];
@@ -110,24 +110,24 @@ export class NoTdtFormComponent implements OnInit {
   step:number;
   totalSteps: number;
   progress:number;
-  pastelForm! : FormGroup;
+  pastelForm! : UntypedFormGroup;
 
   matcher = new MyErrorStateMatcher();
 
   createFormControls() {
-    this.acte_nature = new FormControl('', Validators.required);
-    this.nature_autres = new FormControl('', Validators.required);
-    this.objet = new FormControl('', Validators.required);
-    this.numero_acte = new FormControl('', [Validators.required]);
-    this.arrete = new FormControl('', Validators.required);
-    this.autre_document_attache = new FormControl('');
-    this.classification = new FormControl('', Validators.required);
-    this.date = new FormControl(moment(), Validators.required);
-    this.opendata = new FormControl('', Validators.required);
+    this.acte_nature = new UntypedFormControl('', Validators.required);
+    this.nature_autres = new UntypedFormControl('', Validators.required);
+    this.objet = new UntypedFormControl('', Validators.required);
+    this.numero_acte = new UntypedFormControl('', [Validators.required]);
+    this.arrete = new UntypedFormControl('', Validators.required);
+    this.autre_document_attache = new UntypedFormControl('');
+    this.classification = new UntypedFormControl('', Validators.required);
+    this.date = new UntypedFormControl(moment(), Validators.required);
+    this.opendata = new UntypedFormControl('', Validators.required);
   }
 
   createForm() {
-    this.firstFormGroup = new FormGroup({
+    this.firstFormGroup = new UntypedFormGroup({
       objet: this.objet,
       numero_de_lacte: this.numero_acte,
       acte_nature: this.acte_nature,
@@ -138,18 +138,18 @@ export class NoTdtFormComponent implements OnInit {
 
 
 
-    this.secondFormGroup =  new FormGroup({
+    this.secondFormGroup =  new UntypedFormGroup({
       arrete: this.arrete,
       autre_document_attache: this.autre_document_attache
 
     })
 
-    this.thirdFormGroup = new FormGroup({
+    this.thirdFormGroup = new UntypedFormGroup({
       publication_open_data: this.opendata
     });
 
 
-    this.pastelForm = new FormGroup({
+    this.pastelForm = new UntypedFormGroup({
       firstFormGroup: this.firstFormGroup,
       secondFormGroup: this.secondFormGroup,
       thirdFormGroup : this.thirdFormGroup
