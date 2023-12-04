@@ -1,0 +1,77 @@
+name: Build app
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  push:
+    branches: ["main","develop"]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+
+jobs:
+  build-angular :
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          # caching node_modules
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+
+      - name: Install Dependencies
+        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
+        working-directory: web-app
+        run: |
+          npm ci
+
+      - name: Build angular
+        working-directory: web-app
+        run: |
+          npm run build --prod
+
+      - uses: actions/upload-artifact@v3
+        name: cache-artifact
+        with:
+          name: web-app-dist
+          path: web-app/dist
+
+
+  build-docker-web-app :
+    uses: ./.github/workflows/build-push-docker.yml
+    needs: build-angular
+    with:
+      context: .
+      dockerfile: ./docker/web/Dockerfile
+      image-name: ${{ github.repository_owner }}/megacte-web
+
+  build-back:
+    uses: ./.github/workflows/build-push-docker.yml
+    with:
+      context: back
+      dockerfile: ./docker/back/Dockerfile
+      image-name: ${{ github.repository_owner }}/megacte-back
