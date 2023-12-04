@@ -52,10 +52,11 @@ def user():
     infos = {}
     username = g.username
     params = request.get_json()
-    if 'siren' in params.keys():
-      siren = params['siren']
-    else:
-      return json_response({"erreur": "Le SIREN est inconnu"})
+    siren = '253514491'
+    # if 'siren' in params.keys():
+    #   siren = params['siren']
+    # else:
+    #   return json_response({"erreur": "Le SIREN est inconnu"})
     #Retreive user info (username) in jwt token with g (from middleware.py)
     # With this info, get more infos from Pastell API
     # First We need siren code to filter entities. THen we keep the id_e and
@@ -105,6 +106,7 @@ def user():
     id_e = checkedAuth['id_e']
     logger.info('%s - %s - entité : %s - %s' % (g.user, allowed_role, id_e, "Connecté" ))
     response = PASTELL_SESSIONS[g.uid]
+    status = 200
   return json_response(response, status)
 
 
@@ -267,5 +269,5 @@ def getAllPastellEntities():
 
   print("Referentiel des entités chargé")
 
-#getAllPastellEntities()
+getAllPastellEntities()
 
