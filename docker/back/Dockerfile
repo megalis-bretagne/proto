@@ -12,4 +12,4 @@ COPY config/ ./config/
 
 RUN rm /app/config/config.py_template
 
-CMD ["waitress-serve","--port=80","--call", "api.endpoints:app.run"]
+CMD ["waitress-serve","--port=80","--call", "api:create_app"]

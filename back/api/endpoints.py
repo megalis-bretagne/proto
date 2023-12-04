@@ -1,24 +1,12 @@
-from flask import Flask, json, g, request
-from flask_cors import CORS
+from flask import current_app as app
+from flask import json, g, request
 import requests
-from requests.auth import HTTPBasicAuth
 import logging
-
+from requests.auth import HTTPBasicAuth
 from back.api import login_required
 
-logging.basicConfig(
-        format="%(asctime)s.%(msecs)03d : %(levelname)s : %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
 
-
-
-app = Flask(__name__, instance_relative_config=True)
-CORS(app, resources={r"*": {"origins": "*"}})
-
-app.config.from_object('back.config.config')
 u = app.config['PASTELL_USER']
 p = app.config['PASTELL_PASSWORD']
 restricted_roles =  app.config['RESTRITED_ROLES']
@@ -108,8 +96,6 @@ def user():
     response = PASTELL_SESSIONS[g.uid]
     status = 200
   return json_response(response, status)
-
-
 
 
 @app.route("/document", methods=["POST", "GET"])
