@@ -23,14 +23,15 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     CORS(app, resources={r"*": {"origins": "*"}})
 
-    app.config.from_object('back.config.config')
+    app.config.from_object('api.config')
     with app.app_context():
-        from back.api import endpoints
-    # u = app.config['PASTELL_USER']
-    # p = app.config['PASTELL_PASSWORD']
-    # restricted_roles = app.config['RESTRITED_ROLES']
-    # root_url = app.config['PASTELL_URL']
+        from . import endpoints
+    # u = app.configddd['PASTELL_USER']
+    # p = app.configddd['PASTELL_PASSWORD']
+    # restricted_roles = app.configddd['RESTRITED_ROLES']
+    # root_url = app.configddd['PASTELL_URL']
     return app
+
 def login_required(f):
 
    @wraps(f)

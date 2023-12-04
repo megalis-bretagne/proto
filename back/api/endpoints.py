@@ -3,7 +3,7 @@ from flask import json, g, request
 import requests
 import logging
 from requests.auth import HTTPBasicAuth
-from back.api import login_required
+from api import login_required
 
 logger = logging.getLogger(__name__)
 
