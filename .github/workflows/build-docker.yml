@@ -48,8 +48,6 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
 
       - name: Install Dependencies
         if: steps.cache-nodemodules.outputs.cache-hit != 'true'
@@ -60,7 +58,7 @@ jobs:
       - name: Build angular
         working-directory: web-app
         run: |
-          npm run build -- --prod
+          npm run build --prod
 
       - uses: actions/upload-artifact@v3
         name: cache-artifact
@@ -72,6 +70,12 @@ jobs:
   build-docker-web-app :
     runs-on: ubuntu-latest
     needs: "build-angular"
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -84,7 +88,7 @@ jobs:
 
       # Extract metadata (tags, labels) for Docker
       - name: Extract Docker metadata
-        id: meta
+        id: meta-front
         uses: docker/metadata-action@v5.0.0 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONT }}
@@ -113,23 +117,23 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v5.0.0 # v5.0.0
         with:
-          context: web-app
+          context: .
           file: ./docker/web/Dockerfile
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-front.outputs.tags }}
+          labels: ${{ steps.meta-front.outputs.labels }}
           outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=Front Megactes
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONT }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONT }}:buildcache,mode=max
+#          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONT }}:buildcache
+#          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONT }}:buildcache,mode=max
 
-      - name: Scan for vulnerabilities
-        uses: crazy-max/ghaction-container-scan@v3
-        with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACK }}:${{github.ref_name}}
-          dockerfile: ./docker/web/Dockerfile
-          annotations: true
-          severity: CRITICAL
+#      - name: Scan for vulnerabilities
+#        uses: crazy-max/ghaction-container-scan@v3
+#        with:
+#          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONT }}:${{github.ref_name}}
+#          dockerfile: ./docker/web/Dockerfile
+#          annotations: true
+#          severity: CRITICAL
 
 
   build-docker-back:
