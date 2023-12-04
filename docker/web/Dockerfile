@@ -1,9 +1,6 @@
-FROM nginx:stable
+FROM nginx:stable-alpine
 RUN rm /etc/nginx/conf.d/default.conf
 
-
-COPY --chown=nginx:root . /tmp
-RUN ls -la /tmp
 
 COPY --chown=nginx:root ./docker/web/nginx/ /etc/nginx/
 
