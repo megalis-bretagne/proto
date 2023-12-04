@@ -3,15 +3,21 @@ name: build-push-docker
 on:
   workflow_call:
     inputs:
-      image-name:
+      image-name: # nom de l'image à builder
         required: true
         type: string
-      context:
+      context: #context pour le build de l'image
         type: string
         required: true
-      dockerfile:
+      dockerfile: #chemin du dockerfile
         type: string
         required: true
+      artifact: # si renseigné, indique qu'on télécharge un artifact avec actions/download-artifact@v3
+        type: string
+        required: false
+      path-artifact: # si renseigné, indique qu'on télécharge un artifact avec actions/download-artifact@v3
+        type: string
+        required: false
 
 
 env:
@@ -36,6 +42,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: download artifact
+        if: ${{ inputs.artifact != '' }}
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{inputs.artifact}}
+          path: ${{inputs.path-artifact}}
 
       # Extract metadata (tags, labels) for Docker
       - name: Extract Docker metadata
@@ -74,7 +87,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=Api back Megactes
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ inputs.image-name }}:buildcache
           cache-to:   type=registry,ref=${{ env.REGISTRY }}/${{ inputs.image-name }}:buildcache,mode=max
 
@@ -82,6 +94,6 @@ jobs:
         uses: crazy-max/ghaction-container-scan@v3
         with:
           image: ${{ env.REGISTRY }}/${{ inputs.image-name }}:${{github.ref_name}}
-          dockerfile: ./docker/back/Dockerfile
+          dockerfile: ${{ inputs.dockerfile }}
           annotations: true
           severity: CRITICAL
