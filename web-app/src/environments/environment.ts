@@ -5,9 +5,6 @@
 export const environment = {
   production: false,
   version:'beta 1',
-  // apiURL : 'https://app3.megalis.csm.ovh',
-  // marqueBlancheUrl : 'https://data-preprod.megalis.bretagne.bzh/',
-  // opendataToolUrl: 'https://data-publication-preprod.megalis.bretagne.bzh/',
   repositoryUrl: 'https://github.com/megalis-bretagne/proto',
   modules: ['deliberations', 'actes']
 };
