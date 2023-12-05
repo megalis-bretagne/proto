@@ -25,6 +25,7 @@ import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment} from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NGXLogger } from 'ngx-logger';
 
 const moment = _rollupMoment || _moment;
 
@@ -51,7 +52,7 @@ interface FileItem {
 interface NatureItem  {
   id: string;
   value: string
-};
+}
 
 interface ClassificationGroup {
   label: string;
@@ -163,6 +164,7 @@ export class NoTdtFormComponent implements OnInit {
     private _apiClient: ApiClientService,
     public snackBar: MatSnackBar,
     private http: HttpClient,
+    private _logger: NGXLogger,
     private localStore: LocalService
     ) {}
 
@@ -210,7 +212,7 @@ export class NoTdtFormComponent implements OnInit {
       //format date
       val.date_de_lacte = moment(val.date_de_lacte).format("YYYY-MM-DD");
       this._apiClient.updateDoc(this.idDoc, val).then( (infos:any) => {
-        console.log(infos);
+        this._logger.info(infos);
       })
     }
   }
@@ -233,7 +235,7 @@ export class NoTdtFormComponent implements OnInit {
     // Vrrsement GED/OPENDATA
     this._apiClient.sendDoc(this.idDoc,'orientation').then( (response:any) => {
       if (response.action.result) {
-        let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': 'a été publié avec succès', 'document': this.idDoc, 'link': this.pastellLink}});
+        const snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': 'a été publié avec succès', 'document': this.idDoc, 'link': this.pastellLink}});
         this.toggleBtn();
         this.formEnabled = false;
       }
@@ -251,7 +253,7 @@ export class NoTdtFormComponent implements OnInit {
 
   deleteActe(idDoc) {
     this._apiClient.deleteDoc(idDoc).then( (infos:any) => {
-      console.log(infos);
+      this._logger.info(infos);
       if (infos.pastel.result) {
         this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': 'a été supprimé', 'document': this.idDoc, 'link': this.pastellLink}});
 
@@ -286,7 +288,7 @@ export class NoTdtFormComponent implements OnInit {
 
   async onNewFile(event:Event) {
     const element = (event?.target as HTMLInputElement);
-    let files = element?.files as FileList;
+    const files = element?.files as FileList;
     const name = element?.name;
     const multiple = element?.multiple;
     const docsUploaded = this.filesAnnexe.length;
@@ -294,7 +296,7 @@ export class NoTdtFormComponent implements OnInit {
        const file = files.item(i);
        this.waiting_file = true;
        const res:DocUploaded = await this._apiClient.uploadFile(this.idDoc, name, file, i + docsUploaded);
-       console.log(res);
+       this._logger.debug(res);
        this.waiting_file = false;
        if (element.required) { this.step +=1; }
        this.refreshProgress(0);
@@ -308,7 +310,7 @@ export class NoTdtFormComponent implements OnInit {
   }
 
   async removeFile(file:FileItem) {
-    let res:any = await this._apiClient.deleteFile(this.idDoc, file.source, file.index);
+    const res:any = await this._apiClient.deleteFile(this.idDoc, file.source, file.index);
     if (file.source === "autre_document_attache") {
       if (res.pastel.data.autre_document_attache) {
         //check is file is deleted

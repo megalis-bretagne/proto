@@ -13,12 +13,12 @@ import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { SettingsHttpService } from 'src/environments/settings.http.service';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent, SafeHtmlPipe } from './components/dashboard.component';
-// import { FlexLayoutModule } from '@angular/flex-layout';
 import { DeliberationsComponent } from './components/deliberations.component';
 import { NavbarComponent, DialogNavBar } from './components/navbar.component';
 import { ActesAutresComponent } from './components/actes-autres.component';
 import { PastellSnackComponent } from './components/pastell-snack.component';
-import {DocCreated, DocUploaded, PastellContent, PastellDocCreated, PastellDocInfo, PastellFileUploaded, PastellLastAction} from './interfaces/pastell';
+import { SettingsService } from 'src/environments/settings.service';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 @NgModule({
   declarations: [
@@ -42,14 +42,14 @@ import {DocCreated, DocUploaded, PastellContent, PastellDocCreated, PastellDocIn
     FormsModule,
     ReactiveFormsModule,
     KeycloakAngularModule,
-    HttpClientModule
-    
+    HttpClientModule,
+    LoggerModule.forRoot({ level: NgxLoggerLevel.WARN }),    
   ],
   providers: [
     {
       provide: APP_INITIALIZER,
       useFactory: app_Init,
-      deps: [SettingsHttpService, KeycloakService],
+      deps: [SettingsHttpService, KeycloakService, SettingsService],
       multi: true
     }
   ],

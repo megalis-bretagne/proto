@@ -1,0 +1,5 @@
+PASTELL:
+  URL : <URL>
+  USER : <USER>
+  PASSWORD : <PWD>
+  RESTRITED_ROLES : ['admin_default', 'user_default']
