@@ -27,7 +27,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-*.idea/**
+**/.idea/**
 **/.vscode/
 .vscode/**
 
@@ -132,3 +132,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+back/config/config.yml

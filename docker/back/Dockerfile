@@ -2,11 +2,15 @@ FROM python:3.12.0-alpine
 
 EXPOSE 80
 
-WORKDIR /app
+WORKDIR /appli
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY api/ ./api/
+COPY app/ ./app/
+COPY config/ ./config/
 
-CMD ["waitress-serve","--port=80","--call", "api:create_app"]
+RUN rm /appli/config/config_template.yml
+
+
+CMD ["waitress-serve","--port=80","--call", "app:app_base"]

@@ -1,36 +1,15 @@
 from functools import wraps
-from flask import request, g
+from flask import request, g, Flask
 from jwt import decode, exceptions
 import json
-
-
+import yaml
 import logging
 from flask_cors import CORS
-from flask import Flask
 
 PASTELL_ENTITIES = {}
 # Store the link between user id and entity id
 PASTELL_SESSIONS = {}
 
-def create_app():
-    logging.basicConfig(
-        format="%(asctime)s.%(msecs)03d : %(levelname)s : %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
-    app = Flask(__name__, instance_relative_config=True)
-    CORS(app, resources={r"*": {"origins": "*"}})
-
-    app.config.from_object('api.config')
-    with app.app_context():
-        from . import endpoints
-    # u = app.configddd['PASTELL_USER']
-    # p = app.configddd['PASTELL_PASSWORD']
-    # restricted_roles = app.configddd['RESTRITED_ROLES']
-    # root_url = app.configddd['PASTELL_URL']
-    return app
 
 def login_required(f):
 
@@ -54,3 +33,34 @@ def login_required(f):
        return f(*args, **kwargs)
 
    return wrap
+
+def create_app(config_file = "config/config.yml"):
+    logging.basicConfig(
+        format="%(asctime)s.%(msecs)03d : %(levelname)s : %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    app = Flask(__name__)
+    CORS(app, resources={r"*": {"origins": "*"}})
+    read_config(app, config_file)
+    return app
+
+
+def read_config(app, config_file):
+    try:
+        with open(config_file) as yamlfile:
+            config_data = yaml.load(yamlfile, Loader=yaml.FullLoader)
+    except Exception:
+        config_data = {}
+    # Load common settings
+    app.config.update(config_data)
+
+app = create_app()
+with app.app_context():
+    from . import endpoints
+def app_base():
+    return app
+
+# TODO passer à fast API

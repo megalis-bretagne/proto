@@ -1,21 +1,22 @@
-from flask import current_app as app
+from flask import current_app
 from flask import json, g, request
 import requests
 import logging
 from requests.auth import HTTPBasicAuth
-from api import login_required
+from app import login_required
 
 logger = logging.getLogger(__name__)
 
-u = app.config['PASTELL_USER']
-p = app.config['PASTELL_PASSWORD']
-restricted_roles =  app.config['RESTRITED_ROLES']
-root_url = app.config['PASTELL_URL']
+pastell_config = current_app.config['PASTELL']
+u = pastell_config['USER']
+p = pastell_config['PASSWORD']
+restricted_roles =  pastell_config['RESTRITED_ROLES']
+root_url = pastell_config['URL']
 PASTELL_ENTITIES = {}
 #Store the link between user id and entity id
 PASTELL_SESSIONS = {}
 
-@app.route("/version", methods=["GET"])
+@current_app.route("/version", methods=["GET"])
 @login_required
 def version():
   ressource = '/version'
@@ -28,7 +29,7 @@ def version():
     return json_response({'status': 'error'}, status)
 
 
-@app.route("/user", methods=["POST"])
+@current_app.route("/user", methods=["POST"])
 @login_required
 def user():
   #PASTELL SESSIONS ARE REINITIALIZED AT EACH API RESTART
@@ -98,9 +99,9 @@ def user():
   return json_response(response, status)
 
 
-@app.route("/document", methods=["POST", "GET"])
-@app.route("/document/<string:id_doc>", methods=["POST","PATCH","DELETE"])
-@app.route("/document/<string:id_doc>/action/<string:id_action>", methods=["POST"])
+@current_app.route("/document", methods=["POST", "GET"])
+@current_app.route("/document/<string:id_doc>", methods=["POST","PATCH","DELETE"])
+@current_app.route("/document/<string:id_doc>/action/<string:id_action>", methods=["POST"])
 @login_required
 def document(id_doc=None, element=None, field=None, id_action=None):
   checkedAuth = checkAuth()
@@ -166,7 +167,7 @@ def document(id_doc=None, element=None, field=None, id_action=None):
     else:
       return json_response({'status': 'error'}, status)
 
-@app.route("/document/<string:id_doc>/file/<string:element>/<string:numero>", methods=["POST", "DELETE"])
+@current_app.route("/document/<string:id_doc>/file/<string:element>/<string:numero>", methods=["POST", "DELETE"])
 @login_required
 def addFile(id_doc, element, numero='0'):
   checkedAuth = checkAuth()
@@ -206,7 +207,7 @@ def addFile(id_doc, element, numero='0'):
 
 
 
-@app.route("/document/<string:id_doc>/externalData/<string:field>", methods=["GET"])
+@current_app.route("/document/<string:id_doc>/externalData/<string:field>", methods=["GET"])
 @login_required
 def externalData(id_doc, field):
   #ExternaData
