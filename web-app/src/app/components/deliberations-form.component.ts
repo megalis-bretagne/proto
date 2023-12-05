@@ -22,6 +22,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment} from 'moment';
+import { NGXLogger } from 'ngx-logger';
 
 const moment = _rollupMoment || _moment;
 
@@ -126,7 +127,8 @@ export class DeliberationsFormComponent implements OnInit {
 
   constructor(
     private _apiClient: ApiClientService,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    private _logger: NGXLogger,
     ) {}
 
   ngOnInit() {
@@ -137,11 +139,11 @@ export class DeliberationsFormComponent implements OnInit {
   }
 
   onNewFile(event:Event) {
-    let files = (event?.target as HTMLInputElement)?.files as FileList;
+    const files = (event?.target as HTMLInputElement)?.files as FileList;
     const name = (event?.target as HTMLInputElement)?.name;
-    console.log(this.firstFormGroup.value);
-    console.log(this.secondFormGroup.value);
-    console.log(files.item(0));
+    this._logger.debug(this.firstFormGroup.value);
+    this._logger.debug(this.secondFormGroup.value);
+    this._logger.debug(files.item(0));
     this._apiClient.uploadFile(this.idDoc.value, name, files.item(0)!, 0);
   }
 
@@ -149,8 +151,8 @@ export class DeliberationsFormComponent implements OnInit {
     if (this.idDoc && this.classifications.length == 0) {
       this._apiClient.getClassification(this.idDoc.value).then( (infos: any) => {
         if (infos.externalData.classification) {
-          let tmp = []
-          for (let [k, v] of Object.entries(infos.externalData.classification)) {
+          const tmp = []
+          for (const [k, v] of Object.entries(infos.externalData.classification)) {
             if (v) {
               tmp.push(k)
             }
@@ -164,7 +166,7 @@ export class DeliberationsFormComponent implements OnInit {
 
   part1() {
     if (this.firstFormGroup.invalid) {
-      return false;
+      return ;
     }
     const parameters = {
       'type': 'deliberations-studio',
@@ -183,12 +185,12 @@ export class DeliberationsFormComponent implements OnInit {
           })
 
           this.getClassification();
-          let snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': 'a bien été créé', 'document': this.idDoc.value, 'link': this.pastellLink.value}});
-          console.log(infos.pastel.info);
+          const snackBarRef = this.snackBar.openFromComponent(PastellSnackComponent, { data : { 'message': 'a bien été créé', 'document': this.idDoc.value, 'link': this.pastellLink.value}});
+          this._logger.debug(infos.pastel.info);
           if (infos.pastel.info.id_d) {
             this._apiClient.updateDoc(infos.pastel.info.id_d, parameters).then( (infos:any) => {
               this.lastSendedParameters = parameters;
-              console.log(infos);
+              this._logger.info(infos);
             })
           }
         }
@@ -197,10 +199,10 @@ export class DeliberationsFormComponent implements OnInit {
     } else {
       if (JSON.stringify(this.lastSendedParameters) != JSON.stringify(parameters) ){
         this._apiClient.updateDoc(this.idDoc.value, parameters).then( (infos:any) => {
-          console.log(infos);
+          this._logger.info(infos);
         })
       } else {
-        console.log("nothing to update");
+        this._logger.info("nothing to update");
       }
 
     }
@@ -222,10 +224,10 @@ export class DeliberationsFormComponent implements OnInit {
     }
 
     this._apiClient.updateDoc(this.idDoc.value, parameters).then( (infos:any) => {
-      console.log(infos);
+      this._logger.info(infos);
       //send tdt
       this._apiClient.sendDoc(this.idDoc.value,'orientation').then( (infos:any) => {
-        console.log(infos);
+        this._logger.debug(infos);
         let status;
         if (infos.action!.result === true) {
           status = "1";

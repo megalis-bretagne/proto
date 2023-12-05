@@ -1,0 +1,12 @@
+{
+    "production": true,
+    "keycloak": {
+      "issuer": "<api KC>",
+      "realm": "<REALM>",
+      "clientId": "<client-id>",
+      "urlLogout": "<logout>"
+    },
+    "apiUrl": "http://localhost:5000",
+    "opendataToolUrl": "https://data-publication.megalis.bretagne.bzh/",
+    "urlmarqueblanche" :"https://data.megalis.bretagne.bzh"
+  }

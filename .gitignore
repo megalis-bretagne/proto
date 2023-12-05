@@ -133,3 +133,4 @@ dmypy.json
 .pyre/
 
 back/config/config.yml
+web-app/src/assets/settings.json

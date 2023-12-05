@@ -1,6 +1,5 @@
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActesAutresComponent } from './actes-autres.component';
 import { environment } from 'src/environments/environment';
 
 @Component({

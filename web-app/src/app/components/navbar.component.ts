@@ -3,6 +3,8 @@ import { ApiClientService } from '../api-client.service';
 import { AuthService } from '../services/auth.service';
 import { environment } from 'src/environments/environment';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { SettingsService } from 'src/environments/settings.service';
+import { NGXLogger } from 'ngx-logger';
 
 export interface DialogData {
   version: string;
@@ -33,14 +35,16 @@ export class NavbarComponent implements OnInit {
   constructor(
     private keycloakAuthService : AuthService,
     private apiClient: ApiClientService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private _logger: NGXLogger,
+    readonly settings: SettingsService,
   ) {
     this.version = environment.version;
     this.pastellVersion = 'Non synchronisé';
     this.user = '';
     this.organisme = '';
-    this.marqueBlancheUrl = environment.marqueBlancheUrl;
-    this.opendataToolUrl = environment.opendataToolUrl;
+    this.marqueBlancheUrl = this.settings.urlmarqueblanche;
+    this.opendataToolUrl = this.settings.opendataToolUrl;
     this.repositoryUrl = environment.repositoryUrl;
   }
 
@@ -72,7 +76,7 @@ export class NavbarComponent implements OnInit {
 
     this.apiClient.getUser().then( (infos:any) => {
       this.user = infos.user;
-      console.log(infos);
+      this._logger.debug(infos);
       this.apiClient.setEntity(infos.details['id_e']);
       this.organisme = infos.details.organisme;
       this.marqueBlancheUrl = `${this.marqueBlancheUrl}?siren=${infos.details['siren']}`

@@ -18,7 +18,7 @@ export interface PastellDocCreated {
     action_possible: string[];
     last_action: PastellLastAction;
     id_d: string;
-  };
+  }
 
 export interface PastellContent {
     info: PastellDocInfo;
@@ -32,7 +32,7 @@ export interface PastellFileUploaded {
     formulaire_ok: number;
     message: string;
     content: PastellContent;
-  };
+  }
 
 export interface DocCreated {
     pastel: PastellDocCreated;
