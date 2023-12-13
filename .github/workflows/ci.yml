@@ -10,7 +10,9 @@ on:
     branches: ["main","develop"]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
-
+  pull_request:
+      # The branches below must be a subset of the branches above
+      branches: [ "main", "develop" ]
 
 permissions:
   contents: read
@@ -19,6 +21,21 @@ permissions:
 
 
 jobs:
+  Analyse-code:
+    name: Analyse Code
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@v4.3.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          upload: true
+          max-allowed-issues: 50
+
   build-angular :
     runs-on: ubuntu-latest
 
