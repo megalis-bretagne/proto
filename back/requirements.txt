@@ -1,6 +1,6 @@
 Flask==2.3.3
 Flask-Cors==4.0.0
-PyJWT==1.7.1
+PyJWT==2.4.0
 requests==2.27.1
 waitress==2.1.2
 pyyaml==6.0.1
